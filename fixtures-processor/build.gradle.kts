@@ -1,6 +1,14 @@
 plugins {
     kotlin("jvm")
+    id("org.jetbrains.dokka")
+    id("com.vanniktech.maven.publish")
 }
+
+repositories {
+    mavenCentral()
+}
+
+apply(plugin = "com.vanniktech.maven.publish")
 
 dependencies {
     // Kotlin Dependencies
@@ -14,4 +22,14 @@ dependencies {
     testImplementation(TestDependencies.JUnit.JUNIT)
     testImplementation(TestDependencies.Google.TRUTH)
     testImplementation(TestDependencies.Misc.KOTLIN_COMPILE_TESTING)
+}
+
+tasks.dokkaHtml.configure {
+    outputDirectory.set(buildDir.resolve("dokka"))
+}
+
+plugins.withId("com.vanniktech.maven.publish") {
+    mavenPublish {
+        sonatypeHost = com.vanniktech.maven.publish.SonatypeHost.S01
+    }
 }
