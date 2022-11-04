@@ -11,6 +11,7 @@ private val primitives: Set<String> = setOf(
     "Char",
     "Boolean",
     "Int",
+    "Long",
     "Float",
     "Double"
 )

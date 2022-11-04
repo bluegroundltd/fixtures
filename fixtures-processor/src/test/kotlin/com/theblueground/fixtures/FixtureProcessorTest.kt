@@ -27,6 +27,7 @@ class FixtureProcessorTest : KSPTest() {
                         val floatValue: Float,
                         val booleanValue: Boolean,
                         val intValue: Int,
+                        val longValue: Long,
                         val nestedTestValue: TestSubClass,
                         val dateValue: Date,
                         val uuidValue: UUID,
@@ -80,7 +81,7 @@ class FixtureProcessorTest : KSPTest() {
         assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
         val expected = """
             package somefixture
-
+            
             import java.math.BigDecimal
             import java.math.BigInteger
             import java.util.Date
@@ -89,15 +90,17 @@ class FixtureProcessorTest : KSPTest() {
             import kotlin.Double
             import kotlin.Float
             import kotlin.Int
+            import kotlin.Long
             import kotlin.String
             import kotlin.collections.Map
-
+            
             public fun createTestClass(
               stringValue: String = "stringValue",
               doubleValue: Double = 0.0,
               floatValue: Float = 0f,
               booleanValue: Boolean = false,
               intValue: Int = 0,
+              longValue: Long = 0L,
               nestedTestValue: TestSubClass = createTestSubClass(),
               dateValue: Date = Date(0),
               uuidValue: UUID = UUID.fromString("00000000-0000-0000-0000-000000000000"),
@@ -112,6 +115,7 @@ class FixtureProcessorTest : KSPTest() {
             	floatValue = floatValue,
             	booleanValue = booleanValue,
             	intValue = intValue,
+            	longValue = longValue,
             	nestedTestValue = nestedTestValue,
             	dateValue = dateValue,
             	uuidValue = uuidValue,
@@ -121,7 +125,7 @@ class FixtureProcessorTest : KSPTest() {
             	collectionValue = collectionValue,
             	testSealedValue = testSealedValue
             )
-
+            
         """.trimIndent()
         assertThat(generatedContent).isEqualTo(expected)
     }
