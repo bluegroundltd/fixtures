@@ -5,7 +5,6 @@ import com.google.devtools.ksp.symbol.KSDeclaration
 import com.google.devtools.ksp.symbol.KSType
 import com.google.devtools.ksp.symbol.KSValueParameter
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
-import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.plusParameter
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.ksp.KotlinPoetKspPreview
 import com.squareup.kotlinpoet.ksp.toClassName
@@ -16,7 +15,7 @@ import com.squareup.kotlinpoet.ksp.toTypeName
  */
 @KotlinPoetKspPreview
 internal class ProcessedParameterMapper(
-    private val processedFixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>,
+    private val processedFixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>
 ) {
 
     fun mapParameter(parameterValue: KSValueParameter): ProcessedFixtureParameter {
@@ -73,7 +72,7 @@ internal class ProcessedParameterMapper(
         parameterClassDeclaration: KSClassDeclaration
     ): ProcessedFixtureParameter.PrimitiveParameter = ProcessedFixtureParameter.PrimitiveParameter(
         name = name,
-        classType = parameterClassDeclaration.toClassName(),
+        classType = parameterClassDeclaration.toClassName()
     )
 
     private fun mapKnownTypeParameter(
@@ -81,7 +80,7 @@ internal class ProcessedParameterMapper(
         parameterClassDeclaration: KSClassDeclaration
     ): ProcessedFixtureParameter.KnownTypeParameter = ProcessedFixtureParameter.KnownTypeParameter(
         name = name,
-        classType = parameterClassDeclaration.toClassName(),
+        classType = parameterClassDeclaration.toClassName()
     )
 
     private fun mapFixtureParameter(
@@ -89,7 +88,7 @@ internal class ProcessedParameterMapper(
         parameterClassDeclaration: KSClassDeclaration
     ): ProcessedFixtureParameter.FixtureParameter = ProcessedFixtureParameter.FixtureParameter(
         name = name,
-        classType = parameterClassDeclaration.toClassName(),
+        classType = parameterClassDeclaration.toClassName()
     )
 
     private fun mapEnumParameter(
@@ -136,14 +135,14 @@ internal class ProcessedParameterMapper(
     ): ProcessedFixtureParameter.CollectionParameter {
         val classType = parameterClassDeclaration.toClassName()
 
-        val parameterizedType =
-            classType.parameterizedBy(*parameterType.arguments.map { it.toTypeName() }
-                .toTypedArray())
+        val parameterizedType = classType.parameterizedBy(
+            typeArguments = *parameterType.arguments.map { it.toTypeName() }.toTypedArray()
+        )
 
         return ProcessedFixtureParameter.CollectionParameter(
             name = name,
             classType = classType,
-            parameterizedType = parameterizedType,
+            parameterizedType = parameterizedType
         )
     }
 
@@ -159,7 +158,7 @@ internal class ProcessedParameterMapper(
 
         return ProcessedFixtureParameter.FixtureAdapter(
             name = name,
-            classType = className,
+            classType = className
         )
     }
 }

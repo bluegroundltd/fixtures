@@ -1,6 +1,6 @@
 package com.theblueground.fixtures
 
-import com.google.common.truth.Truth.*
+import com.google.common.truth.Truth.assertThat
 import com.tschuchort.compiletesting.KotlinCompilation
 import com.tschuchort.compiletesting.SourceFile
 import org.junit.Test
@@ -13,9 +13,9 @@ class FixtureAdapterTest : KSPTest() {
 
     private val externalClassSource = """
                     package $externalClassPackageName
-                                            
+
                     class $externalClassName
-        """.trimIndent()
+    """.trimIndent()
 
     private val fixturePackageName = "somefixture"
 
@@ -23,29 +23,29 @@ class FixtureAdapterTest : KSPTest() {
 
     private val fixtureSource = """
                     package $fixturePackageName
-                            
-                    import  $externalClassPackageName.$externalClassName           
+
+                    import  $externalClassPackageName.$externalClassName
                     import com.theblueground.fixtures.Fixture
-            
+
                     @Fixture
                     data class $fixtureName(
                         val stringValue: String,
                         val doubleValue: Double,
                         val externalClassValue: $externalClassName,
                     )
-        """.trimIndent()
+    """.trimIndent()
 
     private val adapterClassPackageName = "adapter"
 
     private val adapterSource = """
                     package $adapterClassPackageName
-                            
-                    import  $externalClassPackageName.$externalClassName           
+
+                    import  $externalClassPackageName.$externalClassName
                     import com.theblueground.fixtures.FixtureAdapter
-            
+
                     @FixtureAdapter
                     fun fixtureProvider(): $externalClassName = $externalClassName()
-        """.trimIndent()
+    """.trimIndent()
 
     @Test
     fun `should generate a builder function while running tests`() {

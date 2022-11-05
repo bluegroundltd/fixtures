@@ -1,7 +1,7 @@
 package com.theblueground.fixtures
 
 /**
- * This annotations help us to provide values for non [supported field types].
+ * This annotations help us to provide values for non [supported field types](SupportedFieldTypes).
  *
  * Let's assume that we have the following classes that do not belong to our domain:
  *

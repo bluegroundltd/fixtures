@@ -22,7 +22,7 @@ internal class ParameterValueGenerator {
     fun generateDefaultValue(
         randomize: Boolean,
         parameter: ProcessedFixtureParameter,
-        fixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>,
+        fixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>
     ): String = when {
         parameter.classType.isNullable && randomize && Random.nextBoolean() -> "null"
         else -> generateParameterValue(
@@ -35,7 +35,7 @@ internal class ParameterValueGenerator {
     private fun generateParameterValue(
         randomize: Boolean,
         parameter: ProcessedFixtureParameter,
-        fixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>,
+        fixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>
     ): String = when (parameter) {
         is ProcessedFixtureParameter.PrimitiveParameter ->
             generatePrimitiveValue(randomize = randomize, parameter = parameter)
@@ -55,7 +55,7 @@ internal class ParameterValueGenerator {
 
     private fun generatePrimitiveValue(
         randomize: Boolean,
-        parameter: ProcessedFixtureParameter.PrimitiveParameter,
+        parameter: ProcessedFixtureParameter.PrimitiveParameter
     ): String = when (parameter.typeName) {
         "String" -> generateStringValue(randomize = randomize, parameter = parameter)
         "Char" -> generateCharValue(randomize = randomize)
@@ -69,7 +69,7 @@ internal class ParameterValueGenerator {
 
     private fun generateStringValue(
         randomize: Boolean,
-        parameter: ProcessedFixtureParameter.PrimitiveParameter,
+        parameter: ProcessedFixtureParameter.PrimitiveParameter
     ): String = if (randomize) {
         """"${buildRandomString()}""""
     } else {
@@ -119,7 +119,7 @@ internal class ParameterValueGenerator {
     @Suppress("ComplexMethod")
     private fun generateKnownTypeValue(
         randomize: Boolean,
-        parameter: ProcessedFixtureParameter.KnownTypeParameter,
+        parameter: ProcessedFixtureParameter.KnownTypeParameter
     ): String = when (parameter.typeName) {
         "Date" -> generateDateValue(randomize = randomize)
         "TimeZone" -> generateTimeZoneValue(randomize = randomize)
@@ -257,7 +257,7 @@ internal class ParameterValueGenerator {
 
     private fun generateFixtureAdapterValue(
         parameter: ProcessedFixtureParameter.FixtureAdapter,
-        fixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>,
+        fixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>
     ): String {
         val adapter = fixtureAdapters[parameter.classType]!!
         return "${adapter.packageName}.${adapter.functionName}()"

@@ -41,7 +41,7 @@ import kotlin.annotation.Retention
  *
  * &nbsp;
  *
- * Check also [supported field types].
+ * Check also [supported field types](SupportedFieldTypes).
  */
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.SOURCE)

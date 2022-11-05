@@ -11,7 +11,7 @@ import com.squareup.kotlinpoet.ClassName
 internal data class ProcessedFixture(
     val classType: ClassName,
     val containingFile: KSFile,
-    val parameters: List<ProcessedFixtureParameter>,
+    val parameters: List<ProcessedFixtureParameter>
 )
 
 internal val ProcessedFixture.simpleName

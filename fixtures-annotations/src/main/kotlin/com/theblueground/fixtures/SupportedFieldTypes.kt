@@ -30,4 +30,4 @@ package com.theblueground.fixtures
  * - Sealed classes (their data subclasses should be annotated with @Fixture)
  * - Other data classes annotated with @Fixture
  */
-private object `supported field types`
+private object SupportedFieldTypes

@@ -13,13 +13,13 @@ class FixtureProcessorTest : KSPTest() {
 
     private val fixtureSource = """
                     package $packageName
-                                
+
                     import com.theblueground.fixtures.Fixture
-                    
+
                     import java.math.BigDecimal
                     import java.math.BigInteger
                     import java.util.*
-                    
+
                     @Fixture
                     data class $fixtureName(
                         val stringValue: String,
@@ -37,21 +37,21 @@ class FixtureProcessorTest : KSPTest() {
                         val collectionValue: Map<Int, String>,
                         val testSealedValue: TestSealed
                     )
-                    
+
                     enum class TestEnum {
                         FIRST_ENUM, SECOND_ENUM
                     }
-                    
+
                     sealed class TestSealed {
-                    
+
                         object First : TestSealed()
-                    
+
                         object Second : TestSealed()
-                    
+
                         @Fixture
                         data class Third(val name: String) : TestSealed()
                     }
-                    
+
                     @Fixture
                     data class TestSubClass(
                         val stringValue: String,
@@ -60,7 +60,7 @@ class FixtureProcessorTest : KSPTest() {
                         val booleanValue: Boolean,
                         val intValue: Int
                     )
-        """.trimIndent()
+    """.trimIndent()
 
     @Test
     fun `should generate a builder function with standard data while running tests`() {
@@ -81,7 +81,7 @@ class FixtureProcessorTest : KSPTest() {
         assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
         val expected = """
             package $packageName
-            
+
             import java.math.BigDecimal
             import java.math.BigInteger
             import java.util.Date
@@ -93,7 +93,7 @@ class FixtureProcessorTest : KSPTest() {
             import kotlin.Long
             import kotlin.String
             import kotlin.collections.Map
-            
+
             public fun create$fixtureName(
               stringValue: String = "stringValue",
               doubleValue: Double = 0.0,
@@ -125,7 +125,7 @@ class FixtureProcessorTest : KSPTest() {
             	collectionValue = collectionValue,
             	testSealedValue = testSealedValue
             )
-            
+
         """.trimIndent()
         assertThat(generatedContent).isEqualTo(expected)
     }
@@ -139,7 +139,7 @@ class FixtureProcessorTest : KSPTest() {
         val result1 = compile(
             arguments = mapOf(
                 "willTestsRun" to "true",
-                "randomize" to "true",
+                "randomize" to "true"
             ),
             sourceFiles = listOf(fixtureFile)
         )
@@ -151,7 +151,7 @@ class FixtureProcessorTest : KSPTest() {
         val result2 = compile(
             arguments = mapOf(
                 "willTestsRun" to "true",
-                "randomize" to "true",
+                "randomize" to "true"
             ),
             sourceFiles = listOf(fixtureFile)
         )
@@ -188,7 +188,7 @@ class FixtureProcessorTest : KSPTest() {
         // Given
         val fixtureSource = """
                     package $packageName
-                                
+
                     import com.theblueground.fixtures.Fixture
 
                     import java.time.ZonedDateTime
@@ -223,7 +223,7 @@ class FixtureProcessorTest : KSPTest() {
                 ZoneId.of("UTC"))): TestClass = $packageName.$fixtureName(
             	zonedDateTimeValue = zonedDateTimeValue
             )
-            
+
         """.trimIndent()
 
         assertThat(generatedContent).isEqualTo(expected)

@@ -10,7 +10,7 @@ import com.squareup.kotlinpoet.ParameterizedTypeName
  */
 internal sealed class ProcessedFixtureParameter(
     open val name: String,
-    open val classType: ClassName,
+    open val classType: ClassName
 ) {
 
     /**
@@ -18,10 +18,10 @@ internal sealed class ProcessedFixtureParameter(
      */
     data class PrimitiveParameter(
         override val name: String,
-        override val classType: ClassName,
+        override val classType: ClassName
     ) : ProcessedFixtureParameter(
         name = name,
-        classType = classType,
+        classType = classType
     )
 
     /**
@@ -44,10 +44,10 @@ internal sealed class ProcessedFixtureParameter(
      */
     data class KnownTypeParameter(
         override val name: String,
-        override val classType: ClassName,
+        override val classType: ClassName
     ) : ProcessedFixtureParameter(
         name = name,
-        classType = classType,
+        classType = classType
     )
 
     /**
@@ -56,10 +56,10 @@ internal sealed class ProcessedFixtureParameter(
      */
     data class FixtureParameter(
         override val name: String,
-        override val classType: ClassName,
+        override val classType: ClassName
     ) : ProcessedFixtureParameter(
         name = name,
-        classType = classType,
+        classType = classType
     )
 
     /**
@@ -71,7 +71,7 @@ internal sealed class ProcessedFixtureParameter(
         val entries: List<String>
     ) : ProcessedFixtureParameter(
         name = name,
-        classType = classType,
+        classType = classType
     )
 
     /**
@@ -87,7 +87,7 @@ internal sealed class ProcessedFixtureParameter(
         val parameterizedType: ParameterizedTypeName
     ) : ProcessedFixtureParameter(
         name = name,
-        classType = classType,
+        classType = classType
     )
 
     /**
@@ -99,7 +99,7 @@ internal sealed class ProcessedFixtureParameter(
         val entries: List<SealedEntry>
     ) : ProcessedFixtureParameter(
         name = name,
-        classType = classType,
+        classType = classType
     ) {
         data class SealedEntry(
             val isObject: Boolean,
@@ -110,10 +110,10 @@ internal sealed class ProcessedFixtureParameter(
 
     data class FixtureAdapter(
         override val name: String,
-        override val classType: ClassName,
-    ): ProcessedFixtureParameter(
+        override val classType: ClassName
+    ) : ProcessedFixtureParameter(
         name = name,
-        classType = classType,
+        classType = classType
     )
 }
 

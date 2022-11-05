@@ -1,7 +1,10 @@
 package com.theblueground.fixtures
 
 import com.google.devtools.ksp.processing.CodeGenerator
-import com.squareup.kotlinpoet.*
+import com.squareup.kotlinpoet.FileSpec
+import com.squareup.kotlinpoet.FunSpec
+import com.squareup.kotlinpoet.ParameterSpec
+import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.ksp.KotlinPoetKspPreview
 import com.squareup.kotlinpoet.ksp.writeTo
 
@@ -24,7 +27,7 @@ internal class FixtureBuilderGenerator(
     fun generate(
         randomize: Boolean,
         processed: ProcessedFixture,
-        fixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>,
+        fixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>
     ) {
         val filename = processed.simpleName + OUTPUT_FIXTURE_FILENAME_SUFFIX
 
@@ -43,7 +46,7 @@ internal class FixtureBuilderGenerator(
 
     private fun ProcessedFixture.toFunSpec(
         randomize: Boolean,
-        fixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>,
+        fixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>
     ): FunSpec {
         val functionName = "create${simpleName.replaceFirstChar { it.uppercaseChar() }}"
 
@@ -64,12 +67,12 @@ internal class FixtureBuilderGenerator(
 
     private fun ProcessedFixtureParameter.toParameterSpec(
         randomize: Boolean,
-        fixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>,
+        fixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>
     ): ParameterSpec {
         val defaultValue = valueGenerator.generateDefaultValue(
             randomize = randomize,
             parameter = this,
-            fixtureAdapters = fixtureAdapters,
+            fixtureAdapters = fixtureAdapters
         )
         return buildParameterType()
             .defaultValue("%L", defaultValue)
@@ -93,13 +96,13 @@ internal class FixtureBuilderGenerator(
 
     private fun ProcessedFixture.buildFunctionStatement(): String =
         // Usage of qualified name ensures that everything will work, even with enclosing classes.
-        "return ${qualifiedName}(\n${parameters.joinToString(",\n") { "\t${it.name} = ${it.name}" }}\n)"
+        "return $qualifiedName(\n${parameters.joinToString(",\n") { "\t${it.name} = ${it.name}" }}\n)"
 
     // This function is just a workaround for this problem:
     // https://github.com/square/kotlinpoet/issues/1406
     // Maybe in the future they support these things.
     private fun FileSpec.Builder.ensureNestedImports(
-        processedFixture: ProcessedFixture,
+        processedFixture: ProcessedFixture
     ): FileSpec.Builder {
         processedFixture.parameters.find { it.classType.simpleName == "ZonedDateTime" }?.let {
             addImport(it.classType.packageName, "ZoneId")

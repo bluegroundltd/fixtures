@@ -1,4 +1,6 @@
+import com.diffplug.gradle.spotless.SpotlessExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import com.diffplug.gradle.spotless.SpotlessPlugin
 
 buildscript {
 
@@ -17,6 +19,7 @@ buildscript {
 
 plugins {
     kotlin("jvm") version "1.6.10" apply false
+    id("com.diffplug.spotless")
 }
 
 allprojects {
@@ -26,6 +29,41 @@ allprojects {
     }
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "1.8"
+val projectJvmTarget = JavaVersion.VERSION_11.toString()
+
+subprojects {
+    pluginManager.configureSpotlessIntegration(subProject = project)
+
+    tasks.withType<KotlinCompile>().configureEach {
+        dependsOn("spotlessKotlinApply")
+        sourceCompatibility = projectJvmTarget
+        targetCompatibility = projectJvmTarget
+
+        kotlinOptions {
+            jvmTarget = projectJvmTarget
+            languageVersion = "1.6"
+        }
+    }
+}
+
+fun PluginManager.configureSpotlessIntegration(subProject: Project) = apply {
+    val spotlessConfiguration: (AppliedPlugin) -> Unit = {
+        subProject.pluginManager.apply(SpotlessPlugin::class.java)
+        subProject.configure<SpotlessExtension> {
+            kotlin {
+                target("src/**/*.kt")
+                ktlint()
+                trimTrailingWhitespace()
+                endWithNewline()
+            }
+
+            kotlinGradle {
+                ktlint()
+                trimTrailingWhitespace()
+                endWithNewline()
+            }
+        }
+    }
+
+    withPlugin("org.jetbrains.kotlin.jvm", spotlessConfiguration)
 }

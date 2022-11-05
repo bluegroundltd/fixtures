@@ -10,7 +10,7 @@ import com.squareup.kotlinpoet.ksp.toTypeName
  * A visitor that extracts all the needed information from a function that was annotated with
  * the [FixtureAdapter] annotation. This information will be used by [FixtureBuilderGenerator] in
  * order to generate a helper function which will create test data with data classes that contain
- * non [supported field types].
+ * non [supported field types](SupportedFieldTypes).
  */
 @KotlinPoetKspPreview
 internal class FixtureAdapterVisitor(
@@ -29,7 +29,7 @@ internal class FixtureAdapterVisitor(
         val returnTypeName = functionReturnType.toTypeName()
         val processedFixtureAdapter = ProcessedFixtureAdapter(
             packageName = function.packageName.asString(),
-            functionName = function.simpleName.asString(),
+            functionName = function.simpleName.asString()
         )
         processedFixtureAdapters[returnTypeName] = processedFixtureAdapter
     }

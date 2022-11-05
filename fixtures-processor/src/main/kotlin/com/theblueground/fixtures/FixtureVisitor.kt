@@ -5,7 +5,6 @@ import com.google.devtools.ksp.symbol.KSVisitorVoid
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.ksp.KotlinPoetKspPreview
 import com.squareup.kotlinpoet.ksp.toClassName
-import com.theblueground.fixtures.Fixture
 
 /**
  * A visitor that extracts all the needed information from a data class that was annotated with
@@ -32,7 +31,7 @@ internal class FixtureVisitor(
         val processedFixture = ProcessedFixture(
             classType = classDeclaration.toClassName(),
             containingFile = classDeclaration.containingFile!!,
-            parameters = extractParameters(classDeclaration = classDeclaration),
+            parameters = extractParameters(classDeclaration = classDeclaration)
         )
         processedFixtures.add(processedFixture)
     }

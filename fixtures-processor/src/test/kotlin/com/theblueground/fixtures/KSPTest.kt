@@ -1,8 +1,11 @@
 package com.theblueground.fixtures
 
-import com.google.common.truth.Truth
 import com.squareup.kotlinpoet.ksp.KotlinPoetKspPreview
-import com.tschuchort.compiletesting.*
+import com.tschuchort.compiletesting.KotlinCompilation
+import com.tschuchort.compiletesting.SourceFile
+import com.tschuchort.compiletesting.kspArgs
+import com.tschuchort.compiletesting.kspWithCompilation
+import com.tschuchort.compiletesting.symbolProcessorProviders
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import java.io.File
@@ -27,7 +30,7 @@ abstract class KSPTest {
     @OptIn(KotlinPoetKspPreview::class)
     private fun prepareCompilation(
         arguments: Map<String, String>,
-        sourceFiles: List<SourceFile>,
+        sourceFiles: List<SourceFile>
     ): KotlinCompilation = KotlinCompilation()
         .apply {
             kspArgs = arguments.toMutableMap()
@@ -41,7 +44,7 @@ abstract class KSPTest {
 
     internal fun compile(
         arguments: Map<String, String> = emptyMap(),
-        sourceFiles: List<SourceFile>,
+        sourceFiles: List<SourceFile>
     ): KotlinCompilation.Result =
         prepareCompilation(arguments = arguments, sourceFiles = sourceFiles).compile()
 }
