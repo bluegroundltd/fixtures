@@ -36,6 +36,7 @@ internal class FixtureBuilderGenerator(
                     fixtureAdapters = fixtureAdapters
                 )
             )
+            .ensureNestedImports(processedFixture = processed)
             .build()
             .writeTo(codeGenerator = codeGenerator, aggregating = true)
     }
@@ -93,4 +94,17 @@ internal class FixtureBuilderGenerator(
     private fun ProcessedFixture.buildFunctionStatement(): String =
         // Usage of qualified name ensures that everything will work, even with enclosing classes.
         "return ${qualifiedName}(\n${parameters.joinToString(",\n") { "\t${it.name} = ${it.name}" }}\n)"
+
+    // This function is just a workaround for this problem:
+    // https://github.com/square/kotlinpoet/issues/1406
+    // Maybe in the future they support these things.
+    private fun FileSpec.Builder.ensureNestedImports(
+        processedFixture: ProcessedFixture,
+    ): FileSpec.Builder {
+        processedFixture.parameters.find { it.classType.simpleName == "ZonedDateTime" }?.let {
+            addImport(it.classType.packageName, "ZoneId")
+        }
+
+        return this
+    }
 }

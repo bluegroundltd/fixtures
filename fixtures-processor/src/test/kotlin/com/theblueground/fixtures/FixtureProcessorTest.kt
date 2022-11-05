@@ -80,7 +80,7 @@ class FixtureProcessorTest : KSPTest() {
         // Then
         assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
         val expected = """
-            package somefixture
+            package $packageName
             
             import java.math.BigDecimal
             import java.math.BigInteger
@@ -94,7 +94,7 @@ class FixtureProcessorTest : KSPTest() {
             import kotlin.String
             import kotlin.collections.Map
             
-            public fun createTestClass(
+            public fun create$fixtureName(
               stringValue: String = "stringValue",
               doubleValue: Double = 0.0,
               floatValue: Float = 0f,
@@ -109,7 +109,7 @@ class FixtureProcessorTest : KSPTest() {
               testEnumValue: TestEnum = TestEnum.FIRST_ENUM,
               collectionValue: Map<Int, String> = emptyMap(),
               testSealedValue: TestSealed = TestSealed.First,
-            ): TestClass = somefixture.TestClass(
+            ): TestClass = $packageName.$fixtureName(
             	stringValue = stringValue,
             	doubleValue = doubleValue,
             	floatValue = floatValue,
@@ -181,5 +181,51 @@ class FixtureProcessorTest : KSPTest() {
         // Then
         assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
         assertThat(generatedFile.exists()).isEqualTo(false)
+    }
+
+    @Test
+    fun `should add import for ZoneId when has ZonedDateTime parameter`() {
+        // Given
+        val fixtureSource = """
+                    package $packageName
+                                
+                    import com.theblueground.fixtures.Fixture
+
+                    import java.time.ZonedDateTime
+
+                    @Fixture
+                    data class $fixtureName(
+                        val zonedDateTimeValue: ZonedDateTime,
+                    )
+        """.trimIndent()
+
+        val fixtureFile = kotlin(name = "$fixtureName.kt", contents = fixtureSource)
+
+        // When
+        val result = compile(
+            arguments = mapOf("willTestsRun" to "true"),
+            sourceFiles = listOf(fixtureFile)
+        )
+        val generatedContent = getGeneratedContent(
+            packageName = packageName,
+            filename = "${fixtureName}Fixture.kt"
+        )
+
+        // Then
+        assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
+        val expected = """
+            package $packageName
+
+            import java.time.ZoneId
+            import java.time.ZonedDateTime
+
+            public fun create$fixtureName(zonedDateTimeValue: ZonedDateTime = ZonedDateTime.of(1989,1,23,0,0,0,0,
+                ZoneId.of("UTC"))): TestClass = $packageName.$fixtureName(
+            	zonedDateTimeValue = zonedDateTimeValue
+            )
+            
+        """.trimIndent()
+
+        assertThat(generatedContent).isEqualTo(expected)
     }
 }
