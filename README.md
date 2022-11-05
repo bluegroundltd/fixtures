@@ -131,10 +131,12 @@ be the case after fixing this [issue](https://github.com/google/ksp/issues/962).
 test functions in our release code by setting the following KSP option:
 
 ```gradle
-ksp.arg("willTestsRun", "false")
+// Instead of setting statically the value to false you 
+// should create a function to calculate this value.
+ksp.arg("willTestsRun", "false") 
 ```
 
-The default value of this option is false. We need to explicitly set it to `true` when we are about to run our tests. 
+The default value of this option is true. We need to explicitly set it to `false` when we are about to run our tests. 
 This can be easily done with a function in our Gradle file.
 
 ## Multi-module support
