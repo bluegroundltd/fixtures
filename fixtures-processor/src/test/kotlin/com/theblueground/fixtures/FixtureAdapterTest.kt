@@ -48,7 +48,7 @@ class FixtureAdapterTest : KSPTest() {
     """.trimIndent()
 
     @Test
-    fun `should generate a builder function while running tests`() {
+    fun `should generate a builder function while running fixtures`() {
         // Given
         val externalClassFile = SourceFile.kotlin(
             name = "$externalClassName.kt",
@@ -65,7 +65,7 @@ class FixtureAdapterTest : KSPTest() {
 
         // When
         val result = compile(
-            arguments = mapOf("willTestsRun" to "true"),
+            arguments = mapOf("runFixtures" to "true"),
             sourceFiles = listOf(externalClassFile, fixtureFile, fixtureAdapterFile)
         )
         val generatedContent = getGeneratedContent(
@@ -97,7 +97,7 @@ class FixtureAdapterTest : KSPTest() {
     }
 
     @Test
-    fun `should not generate a builder function while not running tests`() {
+    fun `should generate a builder function when no options are defined`() {
         // Given
         val externalClassFile = SourceFile.kotlin(
             name = "$externalClassName.kt",
@@ -114,6 +114,55 @@ class FixtureAdapterTest : KSPTest() {
 
         // When
         val result = compile(
+            sourceFiles = listOf(externalClassFile, fixtureFile, fixtureAdapterFile)
+        )
+        val generatedContent = getGeneratedContent(
+            packageName = fixturePackageName,
+            filename = "${fixtureName}Fixture.kt"
+        )
+
+        // Then
+        assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
+        val expected = """
+            package somefixture
+
+            import `external`.ExternalClass
+            import kotlin.Double
+            import kotlin.String
+
+            public fun createTestClass(
+              stringValue: String = "stringValue",
+              doubleValue: Double = 0.0,
+              externalClassValue: ExternalClass = adapter.fixtureProvider(),
+            ): TestClass = somefixture.TestClass(
+            	stringValue = stringValue,
+            	doubleValue = doubleValue,
+            	externalClassValue = externalClassValue
+            )
+
+        """.trimIndent()
+        assertThat(generatedContent).isEqualTo(expected)
+    }
+
+    @Test
+    fun `should not generate a builder function while not running fixtures`() {
+        // Given
+        val externalClassFile = SourceFile.kotlin(
+            name = "$externalClassName.kt",
+            contents = externalClassSource
+        )
+        val fixtureFile = SourceFile.kotlin(
+            name = "$fixtureName.kt",
+            contents = fixtureSource
+        )
+        val fixtureAdapterFile = SourceFile.kotlin(
+            name = "FixtureAdapter.kt",
+            contents = adapterSource
+        )
+
+        // When
+        val result = compile(
+            arguments = mapOf("runFixtures" to "false"),
             sourceFiles = listOf(externalClassFile, fixtureFile, fixtureAdapterFile)
         )
         val generatedFile = getGeneratedFile(
