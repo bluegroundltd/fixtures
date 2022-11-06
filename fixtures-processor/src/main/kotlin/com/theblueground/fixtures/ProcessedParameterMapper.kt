@@ -136,7 +136,7 @@ internal class ProcessedParameterMapper(
         val classType = parameterClassDeclaration.toClassName()
 
         val parameterizedType = classType.parameterizedBy(
-            typeArguments = *parameterType.arguments.map { it.toTypeName() }.toTypedArray()
+            typeArguments = parameterType.arguments.map { it.toTypeName() }.toTypedArray()
         )
 
         return ProcessedFixtureParameter.CollectionParameter(
