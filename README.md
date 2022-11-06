@@ -11,8 +11,8 @@ and decided to use [KSP](https://kotlinlang.org/docs/ksp-overview.html) to autom
 Before using this library, we must set up KSP in our project. We can follow the instructions [here](https://kotlinlang.org/docs/ksp-quickstart.html#use-your-own-processor-in-a-project). Then we must include the following dependency:
 
 ``` 
-implementation("io.github.bluegroundltd:fixtures-annotations:1.0.1")
-implementation("io.github.bluegroundltd:fixtures:1.0.1")
+implementation("io.github.bluegroundltd:fixtures-annotations:1.0.2")
+implementation("io.github.bluegroundltd:fixtures:1.0.2")
 ```
 
 ## How to
