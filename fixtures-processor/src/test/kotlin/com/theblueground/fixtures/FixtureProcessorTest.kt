@@ -63,13 +63,13 @@ class FixtureProcessorTest : KSPTest() {
     """.trimIndent()
 
     @Test
-    fun `should generate a builder function with standard data while running tests`() {
+    fun `should generate a builder function with standard data while running fixtures`() {
         // Given
         val fixtureFile = kotlin(name = "$fixtureName.kt", contents = fixtureSource)
 
         // When
         val result = compile(
-            arguments = mapOf("willTestsRun" to "true"),
+            arguments = mapOf("runFixtures" to "true"),
             sourceFiles = listOf(fixtureFile)
         )
         val generatedContent = getGeneratedContent(
@@ -131,15 +131,80 @@ class FixtureProcessorTest : KSPTest() {
     }
 
     @Test
-    fun `should generate a builder function with randomized data while running tests`() {
+    fun `should generate a builder function with standard data when no options are defined`() {
+        // Given
+        val fixtureFile = kotlin(name = "$fixtureName.kt", contents = fixtureSource)
+
+        // When
+        val result = compile(sourceFiles = listOf(fixtureFile))
+        val generatedContent = getGeneratedContent(
+            packageName = packageName,
+            filename = "${fixtureName}Fixture.kt"
+        )
+
+        // Then
+        assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
+        val expected = """
+            package $packageName
+
+            import java.math.BigDecimal
+            import java.math.BigInteger
+            import java.util.Date
+            import java.util.UUID
+            import kotlin.Boolean
+            import kotlin.Double
+            import kotlin.Float
+            import kotlin.Int
+            import kotlin.Long
+            import kotlin.String
+            import kotlin.collections.Map
+
+            public fun create$fixtureName(
+              stringValue: String = "stringValue",
+              doubleValue: Double = 0.0,
+              floatValue: Float = 0f,
+              booleanValue: Boolean = false,
+              intValue: Int = 0,
+              longValue: Long = 0L,
+              nestedTestValue: TestSubClass = createTestSubClass(),
+              dateValue: Date = Date(0),
+              uuidValue: UUID = UUID.fromString("00000000-0000-0000-0000-000000000000"),
+              bigDecimalValue: BigDecimal = BigDecimal.ZERO,
+              bigIntegerValue: BigInteger = BigInteger.ZERO,
+              testEnumValue: TestEnum = TestEnum.FIRST_ENUM,
+              collectionValue: Map<Int, String> = emptyMap(),
+              testSealedValue: TestSealed = TestSealed.First,
+            ): TestClass = $packageName.$fixtureName(
+            	stringValue = stringValue,
+            	doubleValue = doubleValue,
+            	floatValue = floatValue,
+            	booleanValue = booleanValue,
+            	intValue = intValue,
+            	longValue = longValue,
+            	nestedTestValue = nestedTestValue,
+            	dateValue = dateValue,
+            	uuidValue = uuidValue,
+            	bigDecimalValue = bigDecimalValue,
+            	bigIntegerValue = bigIntegerValue,
+            	testEnumValue = testEnumValue,
+            	collectionValue = collectionValue,
+            	testSealedValue = testSealedValue
+            )
+
+        """.trimIndent()
+        assertThat(generatedContent).isEqualTo(expected)
+    }
+
+    @Test
+    fun `should generate a builder function with randomized data while running fixtures`() {
         // Given
         val fixtureFile = kotlin(name = "$fixtureName.kt", contents = fixtureSource)
 
         // When
         val result1 = compile(
             arguments = mapOf(
-                "willTestsRun" to "true",
-                "randomize" to "true"
+                "runFixtures" to "true",
+                "randomizeFixtures" to "true"
             ),
             sourceFiles = listOf(fixtureFile)
         )
@@ -150,8 +215,8 @@ class FixtureProcessorTest : KSPTest() {
 
         val result2 = compile(
             arguments = mapOf(
-                "willTestsRun" to "true",
-                "randomize" to "true"
+                "runFixtures" to "true",
+                "randomizeFixtures" to "true"
             ),
             sourceFiles = listOf(fixtureFile)
         )
@@ -172,7 +237,10 @@ class FixtureProcessorTest : KSPTest() {
         val fixtureFile = kotlin(name = "$fixtureName.kt", contents = fixtureSource)
 
         // When
-        val result = compile(sourceFiles = listOf(fixtureFile))
+        val result = compile(
+            arguments = mapOf("runFixtures" to "false"),
+            sourceFiles = listOf(fixtureFile)
+        )
         val generatedFile = getGeneratedFile(
             packageName = packageName,
             filename = "${fixtureName}Fixture.kt"
@@ -203,7 +271,7 @@ class FixtureProcessorTest : KSPTest() {
 
         // When
         val result = compile(
-            arguments = mapOf("willTestsRun" to "true"),
+            arguments = mapOf("runFixtures" to "true"),
             sourceFiles = listOf(fixtureFile)
         )
         val generatedContent = getGeneratedContent(
