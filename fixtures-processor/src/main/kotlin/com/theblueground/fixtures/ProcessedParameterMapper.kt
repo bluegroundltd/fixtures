@@ -47,6 +47,10 @@ internal class ProcessedParameterMapper(
                 name = name,
                 parameterClassDeclaration = parameterClassDeclaration
             )
+            parameterValue.isFixtureInOtherModule -> mapFixtureParameter(
+                name = name,
+                parameterClassDeclaration = parameterClassDeclaration
+            )
             parameterClassDeclaration.isEnum -> mapEnumParameter(
                 name = name,
                 parameterClassDeclaration = parameterClassDeclaration

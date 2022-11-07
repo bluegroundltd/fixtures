@@ -4,6 +4,7 @@ import com.google.devtools.ksp.symbol.ClassKind
 import com.google.devtools.ksp.symbol.KSAnnotation
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSDeclaration
+import com.google.devtools.ksp.symbol.KSValueParameter
 import com.google.devtools.ksp.symbol.Modifier
 
 private val primitives: Set<String> = setOf(
@@ -48,6 +49,9 @@ internal val KSDeclaration.isSealed: Boolean
 
 internal val KSDeclaration.isFixture: Boolean
     get() = annotations.contains(Fixture::class.simpleName!!)
+
+internal val KSValueParameter.isFixtureInOtherModule: Boolean
+    get() = annotations.contains(ModularizedFixture::class.simpleName!!)
 
 internal val KSClassDeclaration.isObject: Boolean
     get() = classKind == ClassKind.OBJECT
