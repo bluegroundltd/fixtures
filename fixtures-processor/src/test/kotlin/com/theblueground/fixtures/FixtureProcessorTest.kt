@@ -296,4 +296,119 @@ class FixtureProcessorTest : KSPTest() {
 
         assertThat(generatedContent).isEqualTo(expected)
     }
+
+    @Test
+    fun `should generate a builder function with standard data and nullable arguments`() {
+        // Given
+        val fixtureSource = """
+                    package $packageName
+
+                    import com.theblueground.fixtures.Fixture
+
+                    import java.math.BigDecimal
+                    import java.math.BigInteger
+                    import java.util.*
+
+                    @Fixture
+                    data class $fixtureName(
+                        val stringValue: String?,
+                        val doubleValue: Double?,
+                        val floatValue: Float?,
+                        val booleanValue: Boolean?,
+                        val intValue: Int?,
+                        val longValue: Long?,
+                        val nestedTestValue: TestSubClass?,
+                        val dateValue: Date?,
+                        val uuidValue: UUID?,
+                        val bigDecimalValue: BigDecimal?,
+                        val bigIntegerValue: BigInteger?,
+                        val testEnumValue: TestEnum?,
+                        val collectionValue: Map<Int, String>?,
+                        val testSealedValue: TestSealed?
+                    )
+
+                    enum class TestEnum {
+                        FIRST_ENUM, SECOND_ENUM
+                    }
+
+                    sealed class TestSealed {
+
+                        object First : TestSealed()
+
+                        object Second : TestSealed()
+
+                        @Fixture
+                        data class Third(val name: String) : TestSealed()
+                    }
+
+                    @Fixture
+                    data class TestSubClass(
+                        val stringValue: String,
+                        val doubleValue: Double,
+                        val floatValue: Float,
+                        val booleanValue: Boolean,
+                        val intValue: Int
+                    )
+        """.trimIndent()
+        val fixtureFile = kotlin(name = "$fixtureName.kt", contents = fixtureSource)
+
+        // When
+        val result = compile(sourceFiles = listOf(fixtureFile))
+        val generatedContent = getGeneratedContent(
+            packageName = packageName,
+            filename = "${fixtureName}Fixture.kt"
+        )
+
+        // Then
+        assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
+        val expected = """
+            package $packageName
+
+            import java.math.BigDecimal
+            import java.math.BigInteger
+            import java.util.Date
+            import java.util.UUID
+            import kotlin.Boolean
+            import kotlin.Double
+            import kotlin.Float
+            import kotlin.Int
+            import kotlin.Long
+            import kotlin.String
+            import kotlin.collections.Map
+
+            public fun create$fixtureName(
+              stringValue: String? = "stringValue",
+              doubleValue: Double? = 0.0,
+              floatValue: Float? = 0f,
+              booleanValue: Boolean? = false,
+              intValue: Int? = 0,
+              longValue: Long? = 0L,
+              nestedTestValue: TestSubClass? = $packageName.createTestSubClass(),
+              dateValue: Date? = Date(0),
+              uuidValue: UUID? = UUID.fromString("00000000-0000-0000-0000-000000000000"),
+              bigDecimalValue: BigDecimal? = BigDecimal.ZERO,
+              bigIntegerValue: BigInteger? = BigInteger.ZERO,
+              testEnumValue: TestEnum? = TestEnum.FIRST_ENUM,
+              collectionValue: Map<Int, String>? = emptyMap(),
+              testSealedValue: TestSealed? = TestSealed.First,
+            ): TestClass = $packageName.$fixtureName(
+            	stringValue = stringValue,
+            	doubleValue = doubleValue,
+            	floatValue = floatValue,
+            	booleanValue = booleanValue,
+            	intValue = intValue,
+            	longValue = longValue,
+            	nestedTestValue = nestedTestValue,
+            	dateValue = dateValue,
+            	uuidValue = uuidValue,
+            	bigDecimalValue = bigDecimalValue,
+            	bigIntegerValue = bigIntegerValue,
+            	testEnumValue = testEnumValue,
+            	collectionValue = collectionValue,
+            	testSealedValue = testSealedValue
+            )
+
+        """.trimIndent()
+        assertThat(generatedContent).isEqualTo(expected)
+    }
 }

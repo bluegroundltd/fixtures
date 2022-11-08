@@ -24,7 +24,7 @@ internal class ParameterValueGenerator {
         parameter: ProcessedFixtureParameter,
         fixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>
     ): String = when {
-        parameter.classType.isNullable && randomize && Random.nextBoolean() -> "null"
+        parameter.type.isNullable && randomize && Random.nextBoolean() -> "null"
         else -> generateParameterValue(
             randomize = randomize,
             parameter = parameter,
@@ -259,7 +259,7 @@ internal class ParameterValueGenerator {
         parameter: ProcessedFixtureParameter.FixtureAdapter,
         fixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>
     ): String {
-        val adapter = fixtureAdapters[parameter.classType]!!
+        val adapter = fixtureAdapters[parameter.type]!!
         return "${adapter.packageName}.${adapter.functionName}()"
     }
 }

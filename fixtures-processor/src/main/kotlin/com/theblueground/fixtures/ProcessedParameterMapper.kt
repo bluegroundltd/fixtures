@@ -37,70 +37,72 @@ internal class ProcessedParameterMapper(
         return when {
             parameterClassDeclaration.isPrimitive -> mapPrimitiveParameter(
                 name = name,
-                parameterClassDeclaration = parameterClassDeclaration
+                parameterType = parameterType
             )
             parameterClassDeclaration.isKnownType -> mapKnownTypeParameter(
                 name = name,
-                parameterClassDeclaration = parameterClassDeclaration
+                parameterType = parameterType
             )
             parameterClassDeclaration.isFixture -> mapFixtureParameter(
                 name = name,
-                parameterClassDeclaration = parameterClassDeclaration
+                parameterType = parameterType
             )
             parameterValue.isFixtureInOtherModule -> mapFixtureParameter(
                 name = name,
-                parameterClassDeclaration = parameterClassDeclaration
+                parameterType = parameterType
             )
             parameterClassDeclaration.isEnum -> mapEnumParameter(
-                name = name,
-                parameterClassDeclaration = parameterClassDeclaration
-            )
-            parameterClassDeclaration.isSealed -> mapSealedParameter(
-                name = name,
-                parameterClassDeclaration = parameterClassDeclaration
-            )
-            parameterClassDeclaration.isCollection -> mapCollectionParameter(
                 name = name,
                 parameterType = parameterType,
                 parameterClassDeclaration = parameterClassDeclaration
             )
+            parameterClassDeclaration.isSealed -> mapSealedParameter(
+                name = name,
+                parameterType = parameterType,
+                parameterClassDeclaration = parameterClassDeclaration
+            )
+            parameterClassDeclaration.isCollection -> mapCollectionParameter(
+                name = name,
+                parameterType = parameterType
+            )
             else -> mapFixtureAdapterParameter(
                 name = name,
-                parameterClassDeclaration = parameterClassDeclaration
+                parameterType = parameterType
             )
         }
     }
 
     private fun mapPrimitiveParameter(
         name: String,
-        parameterClassDeclaration: KSClassDeclaration
+        parameterType: KSType
     ): ProcessedFixtureParameter.PrimitiveParameter = ProcessedFixtureParameter.PrimitiveParameter(
         name = name,
-        classType = parameterClassDeclaration.toClassName()
+        type = parameterType.toTypeName()
     )
 
     private fun mapKnownTypeParameter(
         name: String,
-        parameterClassDeclaration: KSClassDeclaration
+        parameterType: KSType
     ): ProcessedFixtureParameter.KnownTypeParameter = ProcessedFixtureParameter.KnownTypeParameter(
         name = name,
-        classType = parameterClassDeclaration.toClassName()
+        type = parameterType.toTypeName()
     )
 
     private fun mapFixtureParameter(
         name: String,
-        parameterClassDeclaration: KSClassDeclaration
+        parameterType: KSType
     ): ProcessedFixtureParameter.FixtureParameter = ProcessedFixtureParameter.FixtureParameter(
         name = name,
-        classType = parameterClassDeclaration.toClassName()
+        type = parameterType.toTypeName()
     )
 
     private fun mapEnumParameter(
         name: String,
+        parameterType: KSType,
         parameterClassDeclaration: KSClassDeclaration
     ): ProcessedFixtureParameter.EnumParameter = ProcessedFixtureParameter.EnumParameter(
         name = name,
-        classType = parameterClassDeclaration.toClassName(),
+        type = parameterType.toTypeName(),
         entries = parameterClassDeclaration.mapEnumEntries()
     )
 
@@ -112,10 +114,11 @@ internal class ProcessedParameterMapper(
 
     private fun mapSealedParameter(
         name: String,
+        parameterType: KSType,
         parameterClassDeclaration: KSClassDeclaration
     ): ProcessedFixtureParameter.SealedParameter = ProcessedFixtureParameter.SealedParameter(
         name = name,
-        classType = parameterClassDeclaration.toClassName(),
+        type = parameterType.toTypeName(),
         entries = parameterClassDeclaration.mapSealedEntries()
     )
 
@@ -134,35 +137,31 @@ internal class ProcessedParameterMapper(
 
     private fun mapCollectionParameter(
         name: String,
-        parameterType: KSType,
-        parameterClassDeclaration: KSClassDeclaration
+        parameterType: KSType
     ): ProcessedFixtureParameter.CollectionParameter {
-        val classType = parameterClassDeclaration.toClassName()
-
-        val parameterizedType = classType.parameterizedBy(
+        val parameterizedType = parameterType.toClassName().parameterizedBy(
             typeArguments = parameterType.arguments.map { it.toTypeName() }.toTypedArray()
-        )
+        ).copy(nullable = parameterType.isMarkedNullable)
 
         return ProcessedFixtureParameter.CollectionParameter(
             name = name,
-            classType = classType,
-            parameterizedType = parameterizedType
+            type = parameterizedType
         )
     }
 
     private fun mapFixtureAdapterParameter(
         name: String,
-        parameterClassDeclaration: KSClassDeclaration
+        parameterType: KSType
     ): ProcessedFixtureParameter.FixtureAdapter {
-        val className = parameterClassDeclaration.toClassName()
+        val type = parameterType.toTypeName()
 
-        processedFixtureAdapters[className] ?: throw IllegalArgumentException(
-            "${parameterClassDeclaration.simpleName.asString()} is not a known type and no related @FixtureAdapter was found"
+        processedFixtureAdapters[type] ?: throw IllegalArgumentException(
+            "${parameterType.toClassName().simpleName} is not a known type and no related @FixtureAdapter was found"
         )
 
         return ProcessedFixtureParameter.FixtureAdapter(
             name = name,
-            classType = className
+            type = type
         )
     }
 }

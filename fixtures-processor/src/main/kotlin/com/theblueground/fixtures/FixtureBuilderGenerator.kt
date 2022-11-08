@@ -74,25 +74,10 @@ internal class FixtureBuilderGenerator(
             parameter = this,
             fixtureAdapters = fixtureAdapters
         )
-        return buildParameterType()
+        return ParameterSpec.builder(name = name, type = type)
             .defaultValue("%L", defaultValue)
             .build()
     }
-
-    private fun ProcessedFixtureParameter.buildParameterType(): ParameterSpec.Builder =
-        when (this) {
-            is ProcessedFixtureParameter.CollectionParameter ->
-                ParameterSpec.builder(name = name, type = parameterizedType)
-            is ProcessedFixtureParameter.EnumParameter,
-            is ProcessedFixtureParameter.FixtureParameter,
-            is ProcessedFixtureParameter.KnownTypeParameter,
-            is ProcessedFixtureParameter.PrimitiveParameter,
-            is ProcessedFixtureParameter.SealedParameter,
-            is ProcessedFixtureParameter.FixtureAdapter -> ParameterSpec.builder(
-                name = name,
-                type = classType
-            )
-        }
 
     private fun ProcessedFixture.buildFunctionStatement(): String =
         // Usage of qualified name ensures that everything will work, even with enclosing classes.
@@ -104,9 +89,9 @@ internal class FixtureBuilderGenerator(
     private fun FileSpec.Builder.ensureNestedImports(
         processedFixture: ProcessedFixture
     ): FileSpec.Builder {
-        processedFixture.parameters.find { it.classType.simpleName == "ZonedDateTime" }?.let {
-            addImport(it.classType.packageName, "ZoneId")
-        }
+        processedFixture.parameters
+            .find { it.typeName == "ZonedDateTime" }
+            ?.let { addImport(it.packageName, "ZoneId") }
 
         return this
     }

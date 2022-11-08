@@ -1,7 +1,12 @@
 package com.theblueground.fixtures
 
 import com.squareup.kotlinpoet.ClassName
+import com.squareup.kotlinpoet.Dynamic
+import com.squareup.kotlinpoet.LambdaTypeName
 import com.squareup.kotlinpoet.ParameterizedTypeName
+import com.squareup.kotlinpoet.TypeName
+import com.squareup.kotlinpoet.TypeVariableName
+import com.squareup.kotlinpoet.WildcardTypeName
 
 /**
  * Keeps all the needed information that is processed for a data class' parameter. The data class
@@ -10,7 +15,7 @@ import com.squareup.kotlinpoet.ParameterizedTypeName
  */
 internal sealed class ProcessedFixtureParameter(
     open val name: String,
-    open val classType: ClassName
+    open val type: TypeName
 ) {
 
     /**
@@ -18,10 +23,10 @@ internal sealed class ProcessedFixtureParameter(
      */
     data class PrimitiveParameter(
         override val name: String,
-        override val classType: ClassName
+        override val type: TypeName
     ) : ProcessedFixtureParameter(
         name = name,
-        classType = classType
+        type = type
     )
 
     /**
@@ -44,10 +49,10 @@ internal sealed class ProcessedFixtureParameter(
      */
     data class KnownTypeParameter(
         override val name: String,
-        override val classType: ClassName
+        override val type: TypeName
     ) : ProcessedFixtureParameter(
         name = name,
-        classType = classType
+        type = type
     )
 
     /**
@@ -56,10 +61,10 @@ internal sealed class ProcessedFixtureParameter(
      */
     data class FixtureParameter(
         override val name: String,
-        override val classType: ClassName
+        override val type: TypeName
     ) : ProcessedFixtureParameter(
         name = name,
-        classType = classType
+        type = type
     )
 
     /**
@@ -67,11 +72,11 @@ internal sealed class ProcessedFixtureParameter(
      */
     data class EnumParameter(
         override val name: String,
-        override val classType: ClassName,
+        override val type: TypeName,
         val entries: List<String>
     ) : ProcessedFixtureParameter(
         name = name,
-        classType = classType
+        type = type
     )
 
     /**
@@ -83,11 +88,10 @@ internal sealed class ProcessedFixtureParameter(
      */
     data class CollectionParameter(
         override val name: String,
-        override val classType: ClassName,
-        val parameterizedType: ParameterizedTypeName
+        override val type: TypeName
     ) : ProcessedFixtureParameter(
         name = name,
-        classType = classType
+        type = type
     )
 
     /**
@@ -95,11 +99,11 @@ internal sealed class ProcessedFixtureParameter(
      */
     data class SealedParameter(
         override val name: String,
-        override val classType: ClassName,
+        override val type: TypeName,
         val entries: List<SealedEntry>
     ) : ProcessedFixtureParameter(
         name = name,
-        classType = classType
+        type = type
     ) {
         data class SealedEntry(
             val isObject: Boolean,
@@ -110,15 +114,29 @@ internal sealed class ProcessedFixtureParameter(
 
     data class FixtureAdapter(
         override val name: String,
-        override val classType: ClassName
+        override val type: TypeName
     ) : ProcessedFixtureParameter(
         name = name,
-        classType = classType
+        type = type
     )
 }
 
-internal val ProcessedFixtureParameter.packageName
-    get() = this.classType.packageName
+internal val ProcessedFixtureParameter.packageName: String
+    get() = when (val type = this.type) {
+        is ClassName -> type.packageName
+        is ParameterizedTypeName -> type.rawType.packageName
+        Dynamic,
+        is LambdaTypeName,
+        is TypeVariableName,
+        is WildcardTypeName -> ""
+    }
 
-internal val ProcessedFixtureParameter.typeName
-    get() = this.classType.simpleName
+internal val ProcessedFixtureParameter.typeName: String
+    get() = when (val type = this.type) {
+        is ClassName -> type.simpleName
+        is ParameterizedTypeName -> type.rawType.simpleName
+        Dynamic,
+        is LambdaTypeName,
+        is TypeVariableName,
+        is WildcardTypeName -> ""
+    }
