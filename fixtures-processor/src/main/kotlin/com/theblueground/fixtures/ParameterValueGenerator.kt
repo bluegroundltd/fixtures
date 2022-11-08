@@ -217,7 +217,7 @@ internal class ParameterValueGenerator {
 
     private fun generateFixtureValue(
         parameter: ProcessedFixtureParameter.FixtureParameter
-    ): String = "create${parameter.typeName}()"
+    ): String = "${parameter.packageName}.create${parameter.typeName}()"
 
     private fun generateEnumValue(
         randomize: Boolean,

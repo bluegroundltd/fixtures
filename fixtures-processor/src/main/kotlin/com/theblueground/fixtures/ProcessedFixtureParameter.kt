@@ -117,5 +117,8 @@ internal sealed class ProcessedFixtureParameter(
     )
 }
 
+internal val ProcessedFixtureParameter.packageName
+    get() = this.classType.packageName
+
 internal val ProcessedFixtureParameter.typeName
     get() = this.classType.simpleName
