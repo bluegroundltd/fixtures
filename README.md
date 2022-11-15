@@ -48,7 +48,7 @@ The generated functions have default values for their parameters. The values are
 based on the parameter's type. If we want to assign random values then we can use the next KSP option:
 
 ```gradle
-ksp.arg("randomizeFixtures", "true")
+ksp.arg("fixtures.randomize", "true")
 ```
 
 After applying the previous option, every time we generate the functions new default values will be assigned. Things to
@@ -134,7 +134,7 @@ test functions in our release code by setting the following KSP option:
 ```gradle
 // Instead of setting statically the value to false you 
 // should create a function to calculate this value.
-ksp.arg("runFixtures", "false") 
+ksp.arg("fixtures.run", "false") 
 ```
 
 The default value of this option is true. We need to explicitly set it to `false` when we are about to run our tests. 

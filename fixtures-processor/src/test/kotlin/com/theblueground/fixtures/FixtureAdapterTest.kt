@@ -65,7 +65,7 @@ class FixtureAdapterTest : KSPTest() {
 
         // When
         val result = compile(
-            arguments = mapOf("runFixtures" to "true"),
+            arguments = mapOf("fixtures.run" to "true"),
             sourceFiles = listOf(externalClassFile, fixtureFile, fixtureAdapterFile)
         )
         val generatedContent = getGeneratedContent(
@@ -162,7 +162,7 @@ class FixtureAdapterTest : KSPTest() {
 
         // When
         val result = compile(
-            arguments = mapOf("runFixtures" to "false"),
+            arguments = mapOf("fixtures.run" to "false"),
             sourceFiles = listOf(externalClassFile, fixtureFile, fixtureAdapterFile)
         )
         val generatedFile = getGeneratedFile(

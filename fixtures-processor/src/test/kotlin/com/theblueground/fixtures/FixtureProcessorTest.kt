@@ -69,7 +69,7 @@ class FixtureProcessorTest : KSPTest() {
 
         // When
         val result = compile(
-            arguments = mapOf("runFixtures" to "true"),
+            arguments = mapOf("fixtures.run" to "true"),
             sourceFiles = listOf(fixtureFile)
         )
         val generatedContent = getGeneratedContent(
@@ -203,8 +203,8 @@ class FixtureProcessorTest : KSPTest() {
         // When
         val result1 = compile(
             arguments = mapOf(
-                "runFixtures" to "true",
-                "randomizeFixtures" to "true"
+                "fixtures.run" to "true",
+                "fixtures.randomize" to "true"
             ),
             sourceFiles = listOf(fixtureFile)
         )
@@ -215,8 +215,8 @@ class FixtureProcessorTest : KSPTest() {
 
         val result2 = compile(
             arguments = mapOf(
-                "runFixtures" to "true",
-                "randomizeFixtures" to "true"
+                "fixtures.run" to "true",
+                "fixtures.randomize" to "true"
             ),
             sourceFiles = listOf(fixtureFile)
         )
@@ -238,7 +238,7 @@ class FixtureProcessorTest : KSPTest() {
 
         // When
         val result = compile(
-            arguments = mapOf("runFixtures" to "false"),
+            arguments = mapOf("fixtures.run" to "false"),
             sourceFiles = listOf(fixtureFile)
         )
         val generatedFile = getGeneratedFile(
@@ -271,7 +271,7 @@ class FixtureProcessorTest : KSPTest() {
 
         // When
         val result = compile(
-            arguments = mapOf("runFixtures" to "true"),
+            arguments = mapOf("fixtures.run" to "true"),
             sourceFiles = listOf(fixtureFile)
         )
         val generatedContent = getGeneratedContent(

@@ -47,9 +47,9 @@ internal class FixtureProcessor(
         processedFixtures = processedFixtures
     )
 
-    private val randomize = options["randomize"]?.let { it.equals("true", true) } ?: false
+    private val randomize = options["fixtures.randomize"]?.let { it.equals("true", true) } ?: false
 
-    private val runFixtures = options["runFixtures"]?.let { it.equals("true", true) } ?: true
+    private val runFixtures = options["fixtures.run"]?.let { it.equals("true", true) } ?: true
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
         if (!runFixtures) {
