@@ -8,6 +8,6 @@ object TestDependencies {
     }
 
     object Misc {
-        const val KOTLIN_COMPILE_TESTING = "com.github.tschuchortdev:kotlin-compile-testing-ksp:1.4.8-alpha02"
+        const val KOTLIN_COMPILE_TESTING = "com.github.tschuchortdev:kotlin-compile-testing-ksp:1.4.9"
     }
 }
