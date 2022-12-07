@@ -4,7 +4,7 @@ object Dependencies {
 
         const val KOTLIN = "org.jetbrains.kotlin:kotlin-stdlib"
 
-        const val KSP = "com.google.devtools.ksp:symbol-processing-api:1.7.21-1.0.8"
+        const val KSP = "com.google.devtools.ksp:symbol-processing-api:1.6.10-1.0.4"
     }
 
     object Square {

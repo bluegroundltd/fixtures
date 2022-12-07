@@ -34,10 +34,15 @@ val projectJvmTarget = JavaVersion.VERSION_11.toString()
 subprojects {
     pluginManager.configureSpotlessIntegration(subProject = project)
 
-    tasks.withType<AbstractCompile>().configureEach {
+    tasks.withType<KotlinCompile>().configureEach {
         dependsOn("spotlessKotlinApply")
         sourceCompatibility = projectJvmTarget
         targetCompatibility = projectJvmTarget
+
+        kotlinOptions {
+            jvmTarget = projectJvmTarget
+            languageVersion = "1.6"
+        }
     }
 }
 
