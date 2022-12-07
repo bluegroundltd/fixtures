@@ -1,6 +1,5 @@
 package com.theblueground.fixtures
 
-import com.squareup.kotlinpoet.ksp.KotlinPoetKspPreview
 import com.tschuchort.compiletesting.KotlinCompilation
 import com.tschuchort.compiletesting.SourceFile
 import com.tschuchort.compiletesting.kspArgs
@@ -27,7 +26,6 @@ abstract class KSPTest {
     internal fun getGeneratedContent(packageName: String, filename: String): String =
         getGeneratedFile(packageName = packageName, filename = filename).bufferedReader().readText()
 
-    @OptIn(KotlinPoetKspPreview::class)
     private fun prepareCompilation(
         arguments: Map<String, String>,
         sourceFiles: List<SourceFile>

@@ -6,14 +6,12 @@ import com.google.devtools.ksp.symbol.KSType
 import com.google.devtools.ksp.symbol.KSValueParameter
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.TypeName
-import com.squareup.kotlinpoet.ksp.KotlinPoetKspPreview
 import com.squareup.kotlinpoet.ksp.toClassName
 import com.squareup.kotlinpoet.ksp.toTypeName
 
 /**
  * Maps KS nodes into a [ProcessedFixtureParameter]
  */
-@KotlinPoetKspPreview
 internal class ProcessedParameterMapper(
     private val processedFixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>
 ) {
