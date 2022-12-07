@@ -31,7 +31,6 @@ internal class FixtureBuilderGenerator(
         val filename = processed.simpleName + OUTPUT_FIXTURE_FILENAME_SUFFIX
 
         FileSpec.builder(packageName = processed.packageName, fileName = filename)
-//            .addOriginatingKSFile(ksFile = processed.containingFile) // TODO Check if we need smth like that
             .addFunction(
                 funSpec = processed.toFunSpec(
                     randomize = randomize,
@@ -50,6 +49,7 @@ internal class FixtureBuilderGenerator(
         val functionName = "create${simpleName.replaceFirstChar { it.uppercaseChar() }}"
 
         val funSpec = FunSpec.builder(name = functionName)
+            .addOriginatingKSFile(containingFile)
 
         parameters.forEach {
             funSpec.addParameter(
