@@ -3,6 +3,7 @@ package com.theblueground.fixtures
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSVisitorVoid
 import com.squareup.kotlinpoet.TypeName
+import com.squareup.kotlinpoet.ksp.KotlinPoetKspPreview
 import com.squareup.kotlinpoet.ksp.toClassName
 
 /**
@@ -10,6 +11,7 @@ import com.squareup.kotlinpoet.ksp.toClassName
  * the [Fixture] annotation. This information will be used by [FixtureBuilderGenerator] in order to
  * generate a helper function which will create test data.
  */
+@KotlinPoetKspPreview
 internal class FixtureVisitor(
     processedFixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>,
     private val processedFixtures: MutableList<ProcessedFixture>

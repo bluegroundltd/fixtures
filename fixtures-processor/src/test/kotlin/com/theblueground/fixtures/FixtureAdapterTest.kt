@@ -1,10 +1,12 @@
 package com.theblueground.fixtures
 
 import com.google.common.truth.Truth.assertThat
+import com.squareup.kotlinpoet.ksp.KotlinPoetKspPreview
 import com.tschuchort.compiletesting.KotlinCompilation
 import com.tschuchort.compiletesting.SourceFile
 import org.junit.Test
 
+@KotlinPoetKspPreview
 class FixtureAdapterTest : KSPTest() {
 
     private val externalClassPackageName = "external"

@@ -11,7 +11,7 @@ object Dependencies {
 
         object Poet {
 
-            private const val VERSION = "1.12.0"
+            private const val VERSION = "1.11.0"
 
             const val KOTLIN = "com.squareup:kotlinpoet:$VERSION"
 

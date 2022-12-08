@@ -3,6 +3,7 @@ package com.theblueground.fixtures
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.symbol.KSVisitorVoid
 import com.squareup.kotlinpoet.TypeName
+import com.squareup.kotlinpoet.ksp.KotlinPoetKspPreview
 import com.squareup.kotlinpoet.ksp.toTypeName
 
 /**
@@ -11,6 +12,7 @@ import com.squareup.kotlinpoet.ksp.toTypeName
  * order to generate a helper function which will create test data with data classes that contain
  * non [supported field types](SupportedFieldTypes).
  */
+@KotlinPoetKspPreview
 internal class FixtureAdapterVisitor(
     private val processedFixtureAdapters: MutableMap<TypeName, ProcessedFixtureAdapter>
 ) : KSVisitorVoid() {

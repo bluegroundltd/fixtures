@@ -1,5 +1,6 @@
 package com.theblueground.fixtures
 
+import com.squareup.kotlinpoet.ksp.KotlinPoetKspPreview
 import com.tschuchort.compiletesting.KotlinCompilation
 import com.tschuchort.compiletesting.SourceFile
 import com.tschuchort.compiletesting.kspArgs
@@ -9,6 +10,7 @@ import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import java.io.File
 
+@KotlinPoetKspPreview
 abstract class KSPTest {
 
     private val generatedSourcesPathPrefix = "ksp/sources/kotlin/"
