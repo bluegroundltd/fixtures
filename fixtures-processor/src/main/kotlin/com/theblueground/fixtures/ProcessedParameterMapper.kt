@@ -35,6 +35,10 @@ internal class ProcessedParameterMapper(
         val name = parameterValue.name!!.asString()
 
         return when {
+            parameterType.hasFixtureAdapter(processedFixtureAdapters) -> mapFixtureAdapterParameter(
+                name = name,
+                parameterType = parameterType
+            )
             parameterClassDeclaration.isPrimitive -> mapPrimitiveParameter(
                 name = name,
                 parameterType = parameterType
@@ -65,9 +69,8 @@ internal class ProcessedParameterMapper(
                 name = name,
                 parameterType = parameterType
             )
-            else -> mapFixtureAdapterParameter(
-                name = name,
-                parameterType = parameterType
+            else -> throw IllegalArgumentException(
+                "${parameterType.toClassName().simpleName} is not a known type and no related @FixtureAdapter was found"
             )
         }
     }
@@ -154,10 +157,6 @@ internal class ProcessedParameterMapper(
         parameterType: KSType
     ): ProcessedFixtureParameter.FixtureAdapter {
         val type = parameterType.toTypeName()
-
-        processedFixtureAdapters[type] ?: throw IllegalArgumentException(
-            "${parameterType.toClassName().simpleName} is not a known type and no related @FixtureAdapter was found"
-        )
 
         return ProcessedFixtureParameter.FixtureAdapter(
             name = name,

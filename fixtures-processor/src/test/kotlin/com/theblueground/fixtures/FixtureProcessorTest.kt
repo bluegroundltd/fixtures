@@ -413,4 +413,44 @@ class FixtureProcessorTest : KSPTest() {
         """.trimIndent()
         assertThat(generatedContent).isEqualTo(expected)
     }
+
+    @Test
+    fun `should generate a builder function with the provided fixture adapter`() {
+        // Given
+        val fixtureSource = """
+                    package $packageName
+
+                    import com.theblueground.fixtures.Fixture
+                    import com.theblueground.fixtures.FixtureAdapter
+
+                    @Fixture
+                    data class $fixtureName(val stringValue: String)
+
+                    @FixtureAdapter
+                    fun stringFixtureProvider(): String = "A string"
+        """.trimIndent()
+        val fixtureFile = kotlin(name = "$fixtureName.kt", contents = fixtureSource)
+
+        // When
+        val result = compile(sourceFiles = listOf(fixtureFile))
+        val generatedContent = getGeneratedContent(
+            packageName = packageName,
+            filename = "${fixtureName}Fixture.kt"
+        )
+
+        // Then
+        assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
+        val expected = """
+            package somefixture
+
+            import kotlin.String
+
+            public fun createTestClass(stringValue: String = somefixture.stringFixtureProvider()): TestClass =
+                somefixture.TestClass(
+            	stringValue = stringValue
+            )
+
+        """.trimIndent()
+        assertThat(generatedContent).isEqualTo(expected)
+    }
 }
