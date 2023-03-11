@@ -1,6 +1,7 @@
 package com.theblueground.fixtures
 
 import com.google.devtools.ksp.symbol.KSClassDeclaration
+import com.google.devtools.ksp.symbol.KSFile
 import com.google.devtools.ksp.symbol.KSVisitorVoid
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.ksp.KotlinPoetKspPreview
@@ -14,7 +15,7 @@ import com.squareup.kotlinpoet.ksp.toClassName
 @KotlinPoetKspPreview
 internal class FixtureVisitor(
     processedFixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>,
-    private val processedFixtures: MutableList<ProcessedFixture>
+    private val processedFixtures: MutableMap<KSFile, List<ProcessedFixture>>
 ) : KSVisitorVoid() {
 
     private val processedParameterMapper = ProcessedParameterMapper(
@@ -28,12 +29,16 @@ internal class FixtureVisitor(
             )
         }
 
+        val containingFile = classDeclaration.containingFile!!
+
         val processedFixture = ProcessedFixture(
             classType = classDeclaration.toClassName(),
-            containingFile = classDeclaration.containingFile!!,
             parameters = extractParameters(classDeclaration = classDeclaration)
         )
-        processedFixtures.add(processedFixture)
+
+        processedFixtures[containingFile] = processedFixtures.getOrDefault(containingFile, emptyList())
+            .toMutableList()
+            .apply { add(processedFixture) }
     }
 
     private fun extractParameters(
