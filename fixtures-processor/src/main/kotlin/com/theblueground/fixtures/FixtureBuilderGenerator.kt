@@ -57,7 +57,7 @@ internal class FixtureBuilderGenerator(
         containingFile: KSFile,
         fixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>
     ): FunSpec {
-        val functionName = "create${simpleName.replaceFirstChar { it.uppercaseChar() }}"
+        val functionName = "create$parentName${simpleName.replaceFirstChar { it.uppercaseChar() }}"
 
         val funSpec = FunSpec.builder(name = functionName)
             .addOriginatingKSFile(containingFile)

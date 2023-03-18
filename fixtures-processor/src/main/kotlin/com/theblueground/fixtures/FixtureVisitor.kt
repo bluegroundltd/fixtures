@@ -1,11 +1,13 @@
 package com.theblueground.fixtures
 
 import com.google.devtools.ksp.symbol.KSClassDeclaration
+import com.google.devtools.ksp.symbol.KSDeclaration
 import com.google.devtools.ksp.symbol.KSFile
 import com.google.devtools.ksp.symbol.KSVisitorVoid
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.ksp.KotlinPoetKspPreview
 import com.squareup.kotlinpoet.ksp.toClassName
+import java.util.Locale
 
 /**
  * A visitor that extracts all the needed information from a data class that was annotated with
@@ -32,6 +34,7 @@ internal class FixtureVisitor(
         val containingFile = classDeclaration.containingFile!!
 
         val processedFixture = ProcessedFixture(
+            parentName = extractParentName(classDeclaration.parentDeclaration),
             classType = classDeclaration.toClassName(),
             parameters = extractParameters(classDeclaration = classDeclaration)
         )
@@ -46,4 +49,11 @@ internal class FixtureVisitor(
     ): List<ProcessedFixtureParameter> = classDeclaration.primaryConstructor!!
         .parameters
         .map { processedParameterMapper.mapParameter(parameterValue = it) }
+
+    private fun extractParentName(parentDeclaration: KSDeclaration?): String {
+        parentDeclaration ?: return ""
+
+        return extractParentName(parentDeclaration.parentDeclaration) + parentDeclaration.simpleName.asString()
+            .replaceFirstChar { it.titlecase(Locale.getDefault()) }
+    }
 }

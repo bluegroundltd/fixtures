@@ -244,7 +244,7 @@ internal class ParameterValueGenerator {
 
         return when {
             sealedEntry.isObject -> "${parameter.typeName}.${sealedEntry.name}"
-            sealedEntry.isFixture -> "create${sealedEntry.name}()"
+            sealedEntry.isFixture -> "create${parameter.typeName}${sealedEntry.name}()"
             else -> throw IllegalArgumentException(
                 "Sealed data classes that are fields of a Fixture should be annotated with @Fixture too"
             )
