@@ -128,6 +128,24 @@ class FixtureProcessorTest : KSPTest() {
             	testSealedValue = testSealedValue
             )
 
+            public fun createThird(name: String = "name"): TestSealed.Third = $packageName.TestSealed.Third(
+            	name = name
+            )
+
+            public fun createTestSubClass(
+              stringValue: String = "stringValue",
+              doubleValue: Double = 0.0,
+              floatValue: Float = 0f,
+              booleanValue: Boolean = false,
+              intValue: Int = 0,
+            ): TestSubClass = $packageName.TestSubClass(
+            	stringValue = stringValue,
+            	doubleValue = doubleValue,
+            	floatValue = floatValue,
+            	booleanValue = booleanValue,
+            	intValue = intValue
+            )
+
         """.trimIndent()
         assertThat(generatedContent).isEqualTo(expected)
     }
@@ -191,6 +209,24 @@ class FixtureProcessorTest : KSPTest() {
             	testEnumValue = testEnumValue,
             	collectionValue = collectionValue,
             	testSealedValue = testSealedValue
+            )
+
+            public fun createThird(name: String = "name"): TestSealed.Third = $packageName.TestSealed.Third(
+            	name = name
+            )
+
+            public fun createTestSubClass(
+              stringValue: String = "stringValue",
+              doubleValue: Double = 0.0,
+              floatValue: Float = 0f,
+              booleanValue: Boolean = false,
+              intValue: Int = 0,
+            ): TestSubClass = $packageName.TestSubClass(
+            	stringValue = stringValue,
+            	doubleValue = doubleValue,
+            	floatValue = floatValue,
+            	booleanValue = booleanValue,
+            	intValue = intValue
             )
 
         """.trimIndent()
@@ -408,6 +444,24 @@ class FixtureProcessorTest : KSPTest() {
             	testEnumValue = testEnumValue,
             	collectionValue = collectionValue,
             	testSealedValue = testSealedValue
+            )
+
+            public fun createThird(name: String = "name"): TestSealed.Third = $packageName.TestSealed.Third(
+            	name = name
+            )
+
+            public fun createTestSubClass(
+              stringValue: String = "stringValue",
+              doubleValue: Double = 0.0,
+              floatValue: Float = 0f,
+              booleanValue: Boolean = false,
+              intValue: Int = 0,
+            ): TestSubClass = $packageName.TestSubClass(
+            	stringValue = stringValue,
+            	doubleValue = doubleValue,
+            	floatValue = floatValue,
+            	booleanValue = booleanValue,
+            	intValue = intValue
             )
 
         """.trimIndent()

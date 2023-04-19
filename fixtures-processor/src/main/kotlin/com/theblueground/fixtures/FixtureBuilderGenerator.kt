@@ -1,6 +1,7 @@
 package com.theblueground.fixtures
 
 import com.google.devtools.ksp.processing.CodeGenerator
+import com.google.devtools.ksp.symbol.KSFile
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.ParameterSpec
@@ -8,6 +9,7 @@ import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.ksp.KotlinPoetKspPreview
 import com.squareup.kotlinpoet.ksp.addOriginatingKSFile
 import com.squareup.kotlinpoet.ksp.writeTo
+import java.io.File
 
 /**
  * It uses the information that was extracted from [FixtureVisitor] to generate a file that contains
@@ -27,25 +29,32 @@ internal class FixtureBuilderGenerator(
 
     fun generate(
         randomize: Boolean,
-        processed: ProcessedFixture,
+        containingFile: KSFile,
+        processedFixtures: List<ProcessedFixture>,
         fixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>
     ) {
-        val filename = processed.simpleName + OUTPUT_FIXTURE_FILENAME_SUFFIX
+        val fileNameWithoutExtension = File(containingFile.fileName).nameWithoutExtension
+        val filename = fileNameWithoutExtension + OUTPUT_FIXTURE_FILENAME_SUFFIX
+        val fileSpec = FileSpec.builder(packageName = containingFile.packageName.asString(), fileName = filename)
 
-        FileSpec.builder(packageName = processed.packageName, fileName = filename)
-            .addFunction(
-                funSpec = processed.toFunSpec(
+        processedFixtures.forEach {
+            fileSpec.addFunction(
+                funSpec = it.toFunSpec(
                     randomize = randomize,
+                    containingFile = containingFile,
                     fixtureAdapters = fixtureAdapters
                 )
             )
-            .ensureNestedImports(processedFixture = processed)
-            .build()
+                .ensureNestedImports(processedFixture = it)
+        }
+
+        fileSpec.build()
             .writeTo(codeGenerator = codeGenerator, aggregating = true)
     }
 
     private fun ProcessedFixture.toFunSpec(
         randomize: Boolean,
+        containingFile: KSFile,
         fixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>
     ): FunSpec {
         val functionName = "create${simpleName.replaceFirstChar { it.uppercaseChar() }}"

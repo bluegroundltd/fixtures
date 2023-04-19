@@ -1,6 +1,5 @@
 package com.theblueground.fixtures
 
-import com.google.devtools.ksp.symbol.KSFile
 import com.squareup.kotlinpoet.ClassName
 
 /**
@@ -10,7 +9,6 @@ import com.squareup.kotlinpoet.ClassName
  */
 internal data class ProcessedFixture(
     val classType: ClassName,
-    val containingFile: KSFile,
     val parameters: List<ProcessedFixtureParameter>
 )
 
