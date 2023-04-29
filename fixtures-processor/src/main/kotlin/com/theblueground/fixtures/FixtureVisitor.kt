@@ -1,11 +1,13 @@
 package com.theblueground.fixtures
 
 import com.google.devtools.ksp.symbol.KSClassDeclaration
+import com.google.devtools.ksp.symbol.KSDeclaration
 import com.google.devtools.ksp.symbol.KSFile
 import com.google.devtools.ksp.symbol.KSVisitorVoid
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.ksp.KotlinPoetKspPreview
 import com.squareup.kotlinpoet.ksp.toClassName
+import java.util.Locale
 
 /**
  * A visitor that extracts all the needed information from a data class that was annotated with
@@ -15,25 +17,26 @@ import com.squareup.kotlinpoet.ksp.toClassName
 @KotlinPoetKspPreview
 internal class FixtureVisitor(
     processedFixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>,
-    private val processedFixtures: MutableMap<KSFile, List<ProcessedFixture>>
+    private val processedFixtures: MutableMap<KSFile, List<ProcessedFixture>>,
 ) : KSVisitorVoid() {
 
     private val processedParameterMapper = ProcessedParameterMapper(
-        processedFixtureAdapters = processedFixtureAdapters
+        processedFixtureAdapters = processedFixtureAdapters,
     )
 
     override fun visitClassDeclaration(classDeclaration: KSClassDeclaration, data: Unit) {
         if (!classDeclaration.isDataClass) {
             throw IllegalStateException(
-                "${Fixture::class.simpleName} can be used only in a data class."
+                "${Fixture::class.simpleName} can be used only in a data class.",
             )
         }
 
         val containingFile = classDeclaration.containingFile!!
 
         val processedFixture = ProcessedFixture(
+            parentName = extractParentName(classDeclaration.parentDeclaration),
             classType = classDeclaration.toClassName(),
-            parameters = extractParameters(classDeclaration = classDeclaration)
+            parameters = extractParameters(classDeclaration = classDeclaration),
         )
 
         processedFixtures[containingFile] = processedFixtures.getOrDefault(containingFile, emptyList())
@@ -42,8 +45,15 @@ internal class FixtureVisitor(
     }
 
     private fun extractParameters(
-        classDeclaration: KSClassDeclaration
+        classDeclaration: KSClassDeclaration,
     ): List<ProcessedFixtureParameter> = classDeclaration.primaryConstructor!!
         .parameters
         .map { processedParameterMapper.mapParameter(parameterValue = it) }
+
+    private fun extractParentName(parentDeclaration: KSDeclaration?): String {
+        parentDeclaration ?: return ""
+
+        return extractParentName(parentDeclaration.parentDeclaration) + parentDeclaration.simpleName.asString()
+            .replaceFirstChar { it.titlecase(Locale.getDefault()) }
+    }
 }

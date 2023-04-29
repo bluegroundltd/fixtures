@@ -15,7 +15,7 @@ import com.squareup.kotlinpoet.WildcardTypeName
  */
 internal sealed class ProcessedFixtureParameter(
     open val name: String,
-    open val type: TypeName
+    open val type: TypeName,
 ) {
 
     /**
@@ -23,10 +23,10 @@ internal sealed class ProcessedFixtureParameter(
      */
     data class PrimitiveParameter(
         override val name: String,
-        override val type: TypeName
+        override val type: TypeName,
     ) : ProcessedFixtureParameter(
         name = name,
-        type = type
+        type = type,
     )
 
     /**
@@ -49,10 +49,10 @@ internal sealed class ProcessedFixtureParameter(
      */
     data class KnownTypeParameter(
         override val name: String,
-        override val type: TypeName
+        override val type: TypeName,
     ) : ProcessedFixtureParameter(
         name = name,
-        type = type
+        type = type,
     )
 
     /**
@@ -61,10 +61,10 @@ internal sealed class ProcessedFixtureParameter(
      */
     data class FixtureParameter(
         override val name: String,
-        override val type: TypeName
+        override val type: TypeName,
     ) : ProcessedFixtureParameter(
         name = name,
-        type = type
+        type = type,
     )
 
     /**
@@ -73,10 +73,10 @@ internal sealed class ProcessedFixtureParameter(
     data class EnumParameter(
         override val name: String,
         override val type: TypeName,
-        val entries: List<String>
+        val entries: List<String>,
     ) : ProcessedFixtureParameter(
         name = name,
-        type = type
+        type = type,
     )
 
     /**
@@ -88,10 +88,10 @@ internal sealed class ProcessedFixtureParameter(
      */
     data class CollectionParameter(
         override val name: String,
-        override val type: TypeName
+        override val type: TypeName,
     ) : ProcessedFixtureParameter(
         name = name,
-        type = type
+        type = type,
     )
 
     /**
@@ -100,24 +100,24 @@ internal sealed class ProcessedFixtureParameter(
     data class SealedParameter(
         override val name: String,
         override val type: TypeName,
-        val entries: List<SealedEntry>
+        val entries: List<SealedEntry>,
     ) : ProcessedFixtureParameter(
         name = name,
-        type = type
+        type = type,
     ) {
         data class SealedEntry(
             val isObject: Boolean,
             val isFixture: Boolean,
-            val name: String
+            val name: String,
         )
     }
 
     data class FixtureAdapter(
         override val name: String,
-        override val type: TypeName
+        override val type: TypeName,
     ) : ProcessedFixtureParameter(
         name = name,
-        type = type
+        type = type,
     )
 }
 
@@ -128,15 +128,17 @@ internal val ProcessedFixtureParameter.packageName: String
         Dynamic,
         is LambdaTypeName,
         is TypeVariableName,
-        is WildcardTypeName -> ""
+        is WildcardTypeName,
+        -> ""
     }
 
 internal val ProcessedFixtureParameter.typeName: String
     get() = when (val type = this.type) {
-        is ClassName -> type.simpleName
+        is ClassName -> type.canonicalName.removePrefix(type.packageName).replace(".", "")
         is ParameterizedTypeName -> type.rawType.simpleName
         Dynamic,
         is LambdaTypeName,
         is TypeVariableName,
-        is WildcardTypeName -> ""
+        is WildcardTypeName,
+        -> ""
     }

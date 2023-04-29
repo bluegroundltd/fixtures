@@ -17,7 +17,7 @@ import java.io.File
  */
 @KotlinPoetKspPreview
 internal class FixtureBuilderGenerator(
-    private val codeGenerator: CodeGenerator
+    private val codeGenerator: CodeGenerator,
 ) {
 
     companion object {
@@ -31,7 +31,7 @@ internal class FixtureBuilderGenerator(
         randomize: Boolean,
         containingFile: KSFile,
         processedFixtures: List<ProcessedFixture>,
-        fixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>
+        fixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>,
     ) {
         val fileNameWithoutExtension = File(containingFile.fileName).nameWithoutExtension
         val filename = fileNameWithoutExtension + OUTPUT_FIXTURE_FILENAME_SUFFIX
@@ -42,8 +42,8 @@ internal class FixtureBuilderGenerator(
                 funSpec = it.toFunSpec(
                     randomize = randomize,
                     containingFile = containingFile,
-                    fixtureAdapters = fixtureAdapters
-                )
+                    fixtureAdapters = fixtureAdapters,
+                ),
             )
                 .ensureNestedImports(processedFixture = it)
         }
@@ -55,9 +55,9 @@ internal class FixtureBuilderGenerator(
     private fun ProcessedFixture.toFunSpec(
         randomize: Boolean,
         containingFile: KSFile,
-        fixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>
+        fixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>,
     ): FunSpec {
-        val functionName = "create${simpleName.replaceFirstChar { it.uppercaseChar() }}"
+        val functionName = "create$parentName${simpleName.replaceFirstChar { it.uppercaseChar() }}"
 
         val funSpec = FunSpec.builder(name = functionName)
             .addOriginatingKSFile(containingFile)
@@ -66,8 +66,8 @@ internal class FixtureBuilderGenerator(
             funSpec.addParameter(
                 parameterSpec = it.toParameterSpec(
                     randomize = randomize,
-                    fixtureAdapters = fixtureAdapters
-                )
+                    fixtureAdapters = fixtureAdapters,
+                ),
             )
         }
 
@@ -77,12 +77,12 @@ internal class FixtureBuilderGenerator(
 
     private fun ProcessedFixtureParameter.toParameterSpec(
         randomize: Boolean,
-        fixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>
+        fixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>,
     ): ParameterSpec {
         val defaultValue = valueGenerator.generateDefaultValue(
             randomize = randomize,
             parameter = this,
-            fixtureAdapters = fixtureAdapters
+            fixtureAdapters = fixtureAdapters,
         )
         return ParameterSpec.builder(name = name, type = type)
             .defaultValue("%L", defaultValue)
@@ -97,7 +97,7 @@ internal class FixtureBuilderGenerator(
     // https://github.com/square/kotlinpoet/issues/1406
     // Maybe in the future they support these things.
     private fun FileSpec.Builder.ensureNestedImports(
-        processedFixture: ProcessedFixture
+        processedFixture: ProcessedFixture,
     ): FileSpec.Builder {
         processedFixture.parameters
             .find { it.typeName == "ZonedDateTime" }

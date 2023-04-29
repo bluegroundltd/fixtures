@@ -36,12 +36,9 @@ subprojects {
 
     tasks.withType<KotlinCompile>().configureEach {
         dependsOn("spotlessKotlinApply")
-        sourceCompatibility = projectJvmTarget
-        targetCompatibility = projectJvmTarget
 
         kotlinOptions {
             jvmTarget = projectJvmTarget
-            languageVersion = "1.6"
         }
     }
 }

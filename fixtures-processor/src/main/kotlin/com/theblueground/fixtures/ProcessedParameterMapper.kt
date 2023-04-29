@@ -15,7 +15,7 @@ import com.squareup.kotlinpoet.ksp.toTypeName
  */
 @KotlinPoetKspPreview
 internal class ProcessedParameterMapper(
-    private val processedFixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>
+    private val processedFixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>,
 ) {
 
     fun mapParameter(parameterValue: KSValueParameter): ProcessedFixtureParameter {
@@ -23,90 +23,90 @@ internal class ProcessedParameterMapper(
         return mapParameter(
             parameterValue = parameterValue,
             parameterType = resolvedType,
-            parameterClassDeclaration = (resolvedType.declaration as KSClassDeclaration)
+            parameterClassDeclaration = (resolvedType.declaration as KSClassDeclaration),
         )
     }
 
     private fun mapParameter(
         parameterValue: KSValueParameter,
         parameterType: KSType,
-        parameterClassDeclaration: KSClassDeclaration
+        parameterClassDeclaration: KSClassDeclaration,
     ): ProcessedFixtureParameter {
         val name = parameterValue.name!!.asString()
 
         return when {
             parameterType.hasFixtureAdapter(processedFixtureAdapters) -> mapFixtureAdapterParameter(
                 name = name,
-                parameterType = parameterType
+                parameterType = parameterType,
             )
             parameterClassDeclaration.isPrimitive -> mapPrimitiveParameter(
                 name = name,
-                parameterType = parameterType
+                parameterType = parameterType,
             )
             parameterClassDeclaration.isKnownType -> mapKnownTypeParameter(
                 name = name,
-                parameterType = parameterType
+                parameterType = parameterType,
             )
             parameterClassDeclaration.isFixture -> mapFixtureParameter(
                 name = name,
-                parameterType = parameterType
+                parameterType = parameterType,
             )
             parameterValue.isFixtureInOtherModule -> mapFixtureParameter(
                 name = name,
-                parameterType = parameterType
+                parameterType = parameterType,
             )
             parameterClassDeclaration.isEnum -> mapEnumParameter(
                 name = name,
                 parameterType = parameterType,
-                parameterClassDeclaration = parameterClassDeclaration
+                parameterClassDeclaration = parameterClassDeclaration,
             )
             parameterClassDeclaration.isSealed -> mapSealedParameter(
                 name = name,
                 parameterType = parameterType,
-                parameterClassDeclaration = parameterClassDeclaration
+                parameterClassDeclaration = parameterClassDeclaration,
             )
             parameterClassDeclaration.isCollection -> mapCollectionParameter(
                 name = name,
-                parameterType = parameterType
+                parameterType = parameterType,
             )
             else -> throw IllegalArgumentException(
-                "${parameterType.toClassName().simpleName} is not a known type and no related @FixtureAdapter was found"
+                "${parameterType.toClassName().simpleName} is not a known type and no related @FixtureAdapter was found",
             )
         }
     }
 
     private fun mapPrimitiveParameter(
         name: String,
-        parameterType: KSType
+        parameterType: KSType,
     ): ProcessedFixtureParameter.PrimitiveParameter = ProcessedFixtureParameter.PrimitiveParameter(
         name = name,
-        type = parameterType.toTypeName()
+        type = parameterType.toTypeName(),
     )
 
     private fun mapKnownTypeParameter(
         name: String,
-        parameterType: KSType
+        parameterType: KSType,
     ): ProcessedFixtureParameter.KnownTypeParameter = ProcessedFixtureParameter.KnownTypeParameter(
         name = name,
-        type = parameterType.toTypeName()
+        type = parameterType.toTypeName(),
     )
 
     private fun mapFixtureParameter(
         name: String,
-        parameterType: KSType
+        parameterType: KSType,
     ): ProcessedFixtureParameter.FixtureParameter = ProcessedFixtureParameter.FixtureParameter(
         name = name,
-        type = parameterType.toTypeName()
+        type = parameterType.toTypeName(),
     )
 
     private fun mapEnumParameter(
         name: String,
         parameterType: KSType,
-        parameterClassDeclaration: KSClassDeclaration
+        parameterClassDeclaration: KSClassDeclaration,
     ): ProcessedFixtureParameter.EnumParameter = ProcessedFixtureParameter.EnumParameter(
         name = name,
         type = parameterType.toTypeName(),
-        entries = parameterClassDeclaration.mapEnumEntries()
+        entries = parameterClassDeclaration.mapEnumEntries(),
     )
 
     private fun KSDeclaration.mapEnumEntries(): List<String> = (this as KSClassDeclaration)
@@ -118,11 +118,11 @@ internal class ProcessedParameterMapper(
     private fun mapSealedParameter(
         name: String,
         parameterType: KSType,
-        parameterClassDeclaration: KSClassDeclaration
+        parameterClassDeclaration: KSClassDeclaration,
     ): ProcessedFixtureParameter.SealedParameter = ProcessedFixtureParameter.SealedParameter(
         name = name,
         type = parameterType.toTypeName(),
-        entries = parameterClassDeclaration.mapSealedEntries()
+        entries = parameterClassDeclaration.mapSealedEntries(),
     )
 
     private fun KSDeclaration.mapSealedEntries(): List<ProcessedFixtureParameter.SealedParameter.SealedEntry> =
@@ -133,34 +133,34 @@ internal class ProcessedParameterMapper(
                 ProcessedFixtureParameter.SealedParameter.SealedEntry(
                     isObject = it.isObject,
                     isFixture = it.isFixture,
-                    name = it.simpleName.asString()
+                    name = it.simpleName.asString(),
                 )
             }
             .toList()
 
     private fun mapCollectionParameter(
         name: String,
-        parameterType: KSType
+        parameterType: KSType,
     ): ProcessedFixtureParameter.CollectionParameter {
         val parameterizedType = parameterType.toClassName().parameterizedBy(
-            typeArguments = parameterType.arguments.map { it.toTypeName() }.toTypedArray()
+            typeArguments = parameterType.arguments.map { it.toTypeName() }.toTypedArray(),
         ).copy(nullable = parameterType.isMarkedNullable)
 
         return ProcessedFixtureParameter.CollectionParameter(
             name = name,
-            type = parameterizedType
+            type = parameterizedType,
         )
     }
 
     private fun mapFixtureAdapterParameter(
         name: String,
-        parameterType: KSType
+        parameterType: KSType,
     ): ProcessedFixtureParameter.FixtureAdapter {
         val type = parameterType.toTypeName()
 
         return ProcessedFixtureParameter.FixtureAdapter(
             name = name,
-            type = type
+            type = type,
         )
     }
 }

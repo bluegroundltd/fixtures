@@ -30,7 +30,7 @@ abstract class KSPTest {
 
     private fun prepareCompilation(
         arguments: Map<String, String>,
-        sourceFiles: List<SourceFile>
+        sourceFiles: List<SourceFile>,
     ): KotlinCompilation = KotlinCompilation()
         .apply {
             kspArgs = arguments.toMutableMap()
@@ -44,7 +44,7 @@ abstract class KSPTest {
 
     internal fun compile(
         arguments: Map<String, String> = emptyMap(),
-        sourceFiles: List<SourceFile>
+        sourceFiles: List<SourceFile>,
     ): KotlinCompilation.Result =
         prepareCompilation(arguments = arguments, sourceFiles = sourceFiles).compile()
 }

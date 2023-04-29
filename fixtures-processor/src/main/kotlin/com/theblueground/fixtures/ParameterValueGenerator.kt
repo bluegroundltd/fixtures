@@ -14,28 +14,28 @@ internal class ParameterValueGenerator {
     private val allowedChars = ('A'..'Z') + ('a'..'z') + ('0'..'9')
 
     private class NotAssignException(
-        parameter: ProcessedFixtureParameter
+        parameter: ProcessedFixtureParameter,
     ) : IllegalArgumentException(
-        "Could not assign value for ${parameter.typeName}. This type is not supported yet!"
+        "Could not assign value for ${parameter.typeName}. This type is not supported yet!",
     )
 
     fun generateDefaultValue(
         randomize: Boolean,
         parameter: ProcessedFixtureParameter,
-        fixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>
+        fixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>,
     ): String = when {
         parameter.type.isNullable && randomize && Random.nextBoolean() -> "null"
         else -> generateParameterValue(
             randomize = randomize,
             parameter = parameter,
-            fixtureAdapters = fixtureAdapters
+            fixtureAdapters = fixtureAdapters,
         )
     }
 
     private fun generateParameterValue(
         randomize: Boolean,
         parameter: ProcessedFixtureParameter,
-        fixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>
+        fixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>,
     ): String = when (parameter) {
         is ProcessedFixtureParameter.PrimitiveParameter ->
             generatePrimitiveValue(randomize = randomize, parameter = parameter)
@@ -55,7 +55,7 @@ internal class ParameterValueGenerator {
 
     private fun generatePrimitiveValue(
         randomize: Boolean,
-        parameter: ProcessedFixtureParameter.PrimitiveParameter
+        parameter: ProcessedFixtureParameter.PrimitiveParameter,
     ): String = when (parameter.typeName) {
         "String" -> generateStringValue(randomize = randomize, parameter = parameter)
         "Char" -> generateCharValue(randomize = randomize)
@@ -69,7 +69,7 @@ internal class ParameterValueGenerator {
 
     private fun generateStringValue(
         randomize: Boolean,
-        parameter: ProcessedFixtureParameter.PrimitiveParameter
+        parameter: ProcessedFixtureParameter.PrimitiveParameter,
     ): String = if (randomize) {
         """"${buildRandomString()}""""
     } else {
@@ -119,7 +119,7 @@ internal class ParameterValueGenerator {
     @Suppress("ComplexMethod")
     private fun generateKnownTypeValue(
         randomize: Boolean,
-        parameter: ProcessedFixtureParameter.KnownTypeParameter
+        parameter: ProcessedFixtureParameter.KnownTypeParameter,
     ): String = when (parameter.typeName) {
         "Date" -> generateDateValue(randomize = randomize)
         "TimeZone" -> generateTimeZoneValue(randomize = randomize)
@@ -216,12 +216,12 @@ internal class ParameterValueGenerator {
     }
 
     private fun generateFixtureValue(
-        parameter: ProcessedFixtureParameter.FixtureParameter
+        parameter: ProcessedFixtureParameter.FixtureParameter,
     ): String = "${parameter.packageName}.create${parameter.typeName}()"
 
     private fun generateEnumValue(
         randomize: Boolean,
-        parameter: ProcessedFixtureParameter.EnumParameter
+        parameter: ProcessedFixtureParameter.EnumParameter,
     ): String {
         val enumEntry = if (randomize) {
             parameter.entries.random()
@@ -234,7 +234,7 @@ internal class ParameterValueGenerator {
 
     private fun generateSealedValue(
         randomize: Boolean,
-        parameter: ProcessedFixtureParameter.SealedParameter
+        parameter: ProcessedFixtureParameter.SealedParameter,
     ): String {
         val sealedEntry = if (randomize) {
             parameter.entries.random()
@@ -244,20 +244,20 @@ internal class ParameterValueGenerator {
 
         return when {
             sealedEntry.isObject -> "${parameter.typeName}.${sealedEntry.name}"
-            sealedEntry.isFixture -> "create${sealedEntry.name}()"
+            sealedEntry.isFixture -> "create${parameter.typeName}${sealedEntry.name}()"
             else -> throw IllegalArgumentException(
-                "Sealed data classes that are fields of a Fixture should be annotated with @Fixture too"
+                "Sealed data classes that are fields of a Fixture should be annotated with @Fixture too",
             )
         }
     }
 
     private fun generateCollectionValue(
-        parameter: ProcessedFixtureParameter.CollectionParameter
+        parameter: ProcessedFixtureParameter.CollectionParameter,
     ): String = "empty${parameter.typeName}()"
 
     private fun generateFixtureAdapterValue(
         parameter: ProcessedFixtureParameter.FixtureAdapter,
-        fixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>
+        fixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>,
     ): String {
         val adapter = fixtureAdapters[parameter.type]!!
         return "${adapter.packageName}.${adapter.functionName}()"

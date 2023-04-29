@@ -8,8 +8,9 @@ import com.squareup.kotlinpoet.ClassName
  * will create test data.
  */
 internal data class ProcessedFixture(
+    val parentName: String,
     val classType: ClassName,
-    val parameters: List<ProcessedFixtureParameter>
+    val parameters: List<ProcessedFixtureParameter>,
 )
 
 internal val ProcessedFixture.simpleName
