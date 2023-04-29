@@ -22,7 +22,7 @@ import com.squareup.kotlinpoet.ksp.KotlinPoetKspPreview
 internal class FixtureProcessor(
     options: Map<String, String>,
     codeGenerator: CodeGenerator,
-    private val logger: KSPLogger
+    private val logger: KSPLogger,
 ) : SymbolProcessor {
 
     companion object {
@@ -38,14 +38,14 @@ internal class FixtureProcessor(
     private val processedFixtureAdapters = mutableMapOf<TypeName, ProcessedFixtureAdapter>()
 
     private val fixtureAdapterVisitor = FixtureAdapterVisitor(
-        processedFixtureAdapters = processedFixtureAdapters
+        processedFixtureAdapters = processedFixtureAdapters,
     )
 
     private val processedFixtures = mutableMapOf<KSFile, List<ProcessedFixture>>()
 
     private val fixtureVisitor = FixtureVisitor(
         processedFixtureAdapters = processedFixtureAdapters,
-        processedFixtures = processedFixtures
+        processedFixtures = processedFixtures,
     )
 
     private val randomize = options["fixtures.randomize"]?.let { it.equals("true", true) } ?: false
@@ -64,7 +64,7 @@ internal class FixtureProcessor(
 
     private fun visitFixtureAdapters(resolver: Resolver) {
         val symbols = resolver.getSymbolsWithAnnotation(
-            annotationName = FIXTURE_ADAPTER_ANNOTATION_FULLY_QUALIFIED_NAME
+            annotationName = FIXTURE_ADAPTER_ANNOTATION_FULLY_QUALIFIED_NAME,
         )
 
         val annotationName = FixtureAdapter::class.simpleName // For logging purposes
@@ -75,14 +75,14 @@ internal class FixtureProcessor(
                 kSFunctionDeclaration.accept(fixtureAdapterVisitor, Unit)
                 val className = kSFunctionDeclaration.simpleName.asString()
                 logger.logging(
-                    message = "The class $className with $annotationName annotation was processed"
+                    message = "The class $className with $annotationName annotation was processed",
                 )
             }
     }
 
     private fun visitFixtures(resolver: Resolver) {
         val symbols = resolver.getSymbolsWithAnnotation(
-            annotationName = FIXTURE_ANNOTATION_FULLY_QUALIFIED_NAME
+            annotationName = FIXTURE_ANNOTATION_FULLY_QUALIFIED_NAME,
         )
 
         val annotationName = Fixture::class.simpleName // For logging purposes
@@ -93,7 +93,7 @@ internal class FixtureProcessor(
                 kSClassDeclaration.accept(fixtureVisitor, Unit)
                 val className = kSClassDeclaration.simpleName.asString()
                 logger.logging(
-                    message = "The class $className with $annotationName annotation was processed"
+                    message = "The class $className with $annotationName annotation was processed",
                 )
             }
     }
@@ -108,7 +108,7 @@ internal class FixtureProcessor(
                 randomize = randomize,
                 containingFile = containingFile,
                 processedFixtures = processedFixtures,
-                fixtureAdapters = processedFixtureAdapters
+                fixtureAdapters = processedFixtureAdapters,
             )
         }
     }

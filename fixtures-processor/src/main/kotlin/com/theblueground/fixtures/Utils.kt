@@ -18,12 +18,12 @@ private val primitives: Set<String> = setOf(
     "Int",
     "Long",
     "Float",
-    "Double"
+    "Double",
 )
 
 @KotlinPoetKspPreview
 internal fun KSType.hasFixtureAdapter(
-    fixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>
+    fixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>,
 ): Boolean = fixtureAdapters[toTypeName()] != null
 
 internal fun String.isPrimitive(): Boolean = primitives.contains(this)
@@ -33,7 +33,7 @@ internal val KSDeclaration.isPrimitive: Boolean
 
 private val knownTypes: Set<String> = setOf(
     "Date", "TimeZone", "UUID", "LocalDate", "LocalTime", "LocalDateTime", "ZonedDateTime",
-    "Instant", "OffsetTime", "OffsetDateTime", "ZoneId", "BigDecimal", "BigInteger"
+    "Instant", "OffsetTime", "OffsetDateTime", "ZoneId", "BigDecimal", "BigInteger",
 )
 
 internal val KSDeclaration.isKnownType: Boolean
@@ -72,7 +72,7 @@ private val collections: Set<String> = setOf(
     "Array",
     "List",
     "Set",
-    "Map"
+    "Map",
 )
 
 internal fun String.isCollection(): Boolean = collections.contains(this)

@@ -14,7 +14,7 @@ import com.squareup.kotlinpoet.ksp.toTypeName
  */
 @KotlinPoetKspPreview
 internal class FixtureAdapterVisitor(
-    private val processedFixtureAdapters: MutableMap<TypeName, ProcessedFixtureAdapter>
+    private val processedFixtureAdapters: MutableMap<TypeName, ProcessedFixtureAdapter>,
 ) : KSVisitorVoid() {
 
     override fun visitFunctionDeclaration(function: KSFunctionDeclaration, data: Unit) {
@@ -29,7 +29,7 @@ internal class FixtureAdapterVisitor(
         val returnTypeName = functionReturnType.toTypeName()
         val processedFixtureAdapter = ProcessedFixtureAdapter(
             packageName = function.packageName.asString(),
-            functionName = function.simpleName.asString()
+            functionName = function.simpleName.asString(),
         )
         processedFixtureAdapters[returnTypeName] = processedFixtureAdapter
     }

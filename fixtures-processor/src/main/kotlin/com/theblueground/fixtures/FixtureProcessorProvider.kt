@@ -12,6 +12,6 @@ internal class FixtureProcessorProvider : SymbolProcessorProvider {
         FixtureProcessor(
             options = environment.options,
             codeGenerator = environment.codeGenerator,
-            logger = environment.logger
+            logger = environment.logger,
         )
 }

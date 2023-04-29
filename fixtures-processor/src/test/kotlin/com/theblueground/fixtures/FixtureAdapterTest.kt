@@ -54,25 +54,25 @@ class FixtureAdapterTest : KSPTest() {
         // Given
         val externalClassFile = SourceFile.kotlin(
             name = "$externalClassName.kt",
-            contents = externalClassSource
+            contents = externalClassSource,
         )
         val fixtureFile = SourceFile.kotlin(
             name = "$fixtureName.kt",
-            contents = fixtureSource
+            contents = fixtureSource,
         )
         val fixtureAdapterFile = SourceFile.kotlin(
             name = "FixtureAdapter.kt",
-            contents = adapterSource
+            contents = adapterSource,
         )
 
         // When
         val result = compile(
             arguments = mapOf("fixtures.run" to "true"),
-            sourceFiles = listOf(externalClassFile, fixtureFile, fixtureAdapterFile)
+            sourceFiles = listOf(externalClassFile, fixtureFile, fixtureAdapterFile),
         )
         val generatedContent = getGeneratedContent(
             packageName = fixturePackageName,
-            filename = "${fixtureName}Fixture.kt"
+            filename = "${fixtureName}Fixture.kt",
         )
 
         // Then
@@ -103,24 +103,24 @@ class FixtureAdapterTest : KSPTest() {
         // Given
         val externalClassFile = SourceFile.kotlin(
             name = "$externalClassName.kt",
-            contents = externalClassSource
+            contents = externalClassSource,
         )
         val fixtureFile = SourceFile.kotlin(
             name = "$fixtureName.kt",
-            contents = fixtureSource
+            contents = fixtureSource,
         )
         val fixtureAdapterFile = SourceFile.kotlin(
             name = "FixtureAdapter.kt",
-            contents = adapterSource
+            contents = adapterSource,
         )
 
         // When
         val result = compile(
-            sourceFiles = listOf(externalClassFile, fixtureFile, fixtureAdapterFile)
+            sourceFiles = listOf(externalClassFile, fixtureFile, fixtureAdapterFile),
         )
         val generatedContent = getGeneratedContent(
             packageName = fixturePackageName,
-            filename = "${fixtureName}Fixture.kt"
+            filename = "${fixtureName}Fixture.kt",
         )
 
         // Then
@@ -151,25 +151,25 @@ class FixtureAdapterTest : KSPTest() {
         // Given
         val externalClassFile = SourceFile.kotlin(
             name = "$externalClassName.kt",
-            contents = externalClassSource
+            contents = externalClassSource,
         )
         val fixtureFile = SourceFile.kotlin(
             name = "$fixtureName.kt",
-            contents = fixtureSource
+            contents = fixtureSource,
         )
         val fixtureAdapterFile = SourceFile.kotlin(
             name = "FixtureAdapter.kt",
-            contents = adapterSource
+            contents = adapterSource,
         )
 
         // When
         val result = compile(
             arguments = mapOf("fixtures.run" to "false"),
-            sourceFiles = listOf(externalClassFile, fixtureFile, fixtureAdapterFile)
+            sourceFiles = listOf(externalClassFile, fixtureFile, fixtureAdapterFile),
         )
         val generatedFile = getGeneratedFile(
             packageName = fixturePackageName,
-            filename = "${fixtureName}Fixture.kt"
+            filename = "${fixtureName}Fixture.kt",
         )
 
         // Then

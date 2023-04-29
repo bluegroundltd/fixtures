@@ -10,7 +10,7 @@ import com.squareup.kotlinpoet.ClassName
 internal data class ProcessedFixture(
     val parentName: String,
     val classType: ClassName,
-    val parameters: List<ProcessedFixtureParameter>
+    val parameters: List<ProcessedFixtureParameter>,
 )
 
 internal val ProcessedFixture.simpleName
