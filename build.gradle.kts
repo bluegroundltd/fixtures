@@ -30,7 +30,7 @@ allprojects {
     }
 }
 
-val projectJvmTarget = JavaVersion.VERSION_11.toString()
+val projectJvmTarget = JavaVersion.VERSION_17.toString()
 
 subprojects {
     pluginManager.configureSpotlessIntegration(subProject = project)
