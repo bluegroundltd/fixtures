@@ -13,7 +13,7 @@ buildscript {
     dependencies {
         classpath(kotlin("gradle-plugin", version = "1.9.10"))
         classpath("com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:1.9.10-1.0.13")
-        classpath("org.jetbrains.dokka:dokka-gradle-plugin:1.5.31")
+        classpath("org.jetbrains.dokka:dokka-gradle-plugin:1.9.10")
         classpath("com.vanniktech:gradle-maven-publish-plugin:0.25.3")
     }
 }
