@@ -8,7 +8,6 @@ import com.google.devtools.ksp.symbol.KSType
 import com.google.devtools.ksp.symbol.KSValueParameter
 import com.google.devtools.ksp.symbol.Modifier
 import com.squareup.kotlinpoet.TypeName
-import com.squareup.kotlinpoet.ksp.KotlinPoetKspPreview
 import com.squareup.kotlinpoet.ksp.toTypeName
 
 private val primitives: Set<String> = setOf(
@@ -21,7 +20,6 @@ private val primitives: Set<String> = setOf(
     "Double",
 )
 
-@KotlinPoetKspPreview
 internal fun KSType.hasFixtureAdapter(
     fixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>,
 ): Boolean = fixtureAdapters[toTypeName()] != null

@@ -5,7 +5,6 @@ import com.google.devtools.ksp.symbol.KSDeclaration
 import com.google.devtools.ksp.symbol.KSFile
 import com.google.devtools.ksp.symbol.KSVisitorVoid
 import com.squareup.kotlinpoet.TypeName
-import com.squareup.kotlinpoet.ksp.KotlinPoetKspPreview
 import com.squareup.kotlinpoet.ksp.toClassName
 import java.util.Locale
 
@@ -14,7 +13,6 @@ import java.util.Locale
  * the [Fixture] annotation. This information will be used by [FixtureBuilderGenerator] in order to
  * generate a helper function which will create test data.
  */
-@KotlinPoetKspPreview
 internal class FixtureVisitor(
     processedFixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>,
     private val processedFixtures: MutableMap<KSFile, List<ProcessedFixture>>,

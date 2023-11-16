@@ -6,7 +6,6 @@ import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.TypeName
-import com.squareup.kotlinpoet.ksp.KotlinPoetKspPreview
 import com.squareup.kotlinpoet.ksp.addOriginatingKSFile
 import com.squareup.kotlinpoet.ksp.writeTo
 import java.io.File
@@ -15,7 +14,6 @@ import java.io.File
  * It uses the information that was extracted from [FixtureVisitor] to generate a file that contains
  * a helper function which will create test data.
  */
-@KotlinPoetKspPreview
 internal class FixtureBuilderGenerator(
     private val codeGenerator: CodeGenerator,
 ) {

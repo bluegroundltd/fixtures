@@ -1,12 +1,10 @@
 package com.theblueground.fixtures
 
 import com.google.common.truth.Truth.assertThat
-import com.squareup.kotlinpoet.ksp.KotlinPoetKspPreview
 import com.tschuchort.compiletesting.KotlinCompilation
 import com.tschuchort.compiletesting.SourceFile.Companion.kotlin
 import org.junit.Test
 
-@KotlinPoetKspPreview
 class FixtureProcessorTest : KSPTest() {
 
     private val packageName = "somefixture"

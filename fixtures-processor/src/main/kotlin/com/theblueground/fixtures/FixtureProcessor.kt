@@ -10,7 +10,6 @@ import com.google.devtools.ksp.symbol.KSFile
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.validate
 import com.squareup.kotlinpoet.TypeName
-import com.squareup.kotlinpoet.ksp.KotlinPoetKspPreview
 
 /**
  * Responsible for processing all data classes that were annotated with the [Fixture] annotation
@@ -18,7 +17,6 @@ import com.squareup.kotlinpoet.ksp.KotlinPoetKspPreview
  * necessary information from the data class declaration and then will use an [FixtureBuilderGenerator]
  * to generate the functions.
  */
-@KotlinPoetKspPreview
 internal class FixtureProcessor(
     options: Map<String, String>,
     codeGenerator: CodeGenerator,
