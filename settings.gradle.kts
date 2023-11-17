@@ -1,4 +1,8 @@
 pluginManagement {
+    repositories {
+        gradlePluginPortal()
+    }
+
     resolutionStrategy {
         eachPlugin {
             val kotlinVersion: String by settings
@@ -13,4 +17,4 @@ pluginManagement {
 }
 
 rootProject.name = "fixtures"
-include(":fixtures-processor",":fixtures-annotations")
+include(":sample-module-1", ":sample-module-2",":fixtures-processor",":fixtures-annotations")
