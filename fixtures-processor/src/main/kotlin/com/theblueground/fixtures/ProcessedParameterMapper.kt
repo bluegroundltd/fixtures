@@ -3,6 +3,7 @@ package com.theblueground.fixtures
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSDeclaration
 import com.google.devtools.ksp.symbol.KSType
+import com.google.devtools.ksp.symbol.KSTypeAlias
 import com.google.devtools.ksp.symbol.KSValueParameter
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.TypeName
@@ -20,19 +21,18 @@ internal class ProcessedParameterMapper(
 
     fun mapParameter(parameterValue: KSValueParameter): ProcessedFixtureParameter {
         val resolvedType = parameterValue.type.resolve()
-        return mapParameter(
-            parameterValue = parameterValue,
-            parameterType = resolvedType,
-            parameterClassDeclaration = (resolvedType.declaration as KSClassDeclaration),
-        )
+        return when (val declaration = resolvedType.declaration) {
+            is KSTypeAlias -> mapParameter(parameterValue, declaration.type.resolve())
+            else -> mapParameter(parameterValue, resolvedType)
+        }
     }
 
     private fun mapParameter(
         parameterValue: KSValueParameter,
         parameterType: KSType,
-        parameterClassDeclaration: KSClassDeclaration,
     ): ProcessedFixtureParameter {
         val name = parameterValue.name!!.asString()
+        val parameterClassDeclaration = parameterType.declaration as KSClassDeclaration
 
         return when {
             parameterType.hasFixtureAdapter(processedFixtureAdapters) -> mapFixtureAdapterParameter(
