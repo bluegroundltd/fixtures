@@ -17,4 +17,11 @@ pluginManagement {
 }
 
 rootProject.name = "fixtures"
-include(":sample-module-1", ":sample-module-2",":fixtures-processor",":fixtures-annotations")
+include(
+    ":sample-module-1",
+    ":sample-module-2",
+    ":fixtures-core",
+    ":fixtures-annotations",
+    ":fixtures-test-utils",
+    ":fixtures-processor-kotlin",
+)

@@ -20,5 +20,5 @@ dependencies {
     implementation(Dependencies.Kotlin.KSP)
 
     implementation(project(":fixtures-annotations"))
-    ksp(project(":fixtures-processor"))
+    ksp(project(":fixtures-processor-kotlin"))
 }

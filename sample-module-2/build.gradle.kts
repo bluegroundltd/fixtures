@@ -22,6 +22,6 @@ dependencies {
     testImplementation(TestDependencies.JUnit.JUNIT)
 
     implementation(project(":fixtures-annotations"))
-    ksp(project(":fixtures-processor"))
+    ksp(project(":fixtures-processor-kotlin"))
     implementation(project(":sample-module-1"))
 }
