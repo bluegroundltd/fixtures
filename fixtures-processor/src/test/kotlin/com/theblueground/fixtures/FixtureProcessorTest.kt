@@ -272,6 +272,51 @@ class FixtureProcessorTest : KSPTest() {
     }
 
     @Test
+    fun `should generate a builder function with resolved type for typealias`() {
+        // Given
+        val fixtureSource = """
+                    package $packageName
+
+                    import com.theblueground.fixtures.Fixture
+
+                    import java.math.BigDecimal
+
+                    @Fixture
+                    data class $fixtureName(
+                        val bigDecimalAliasValue: BigDecimalAlias,
+                    )
+
+                    typealias BigDecimalAlias = BigDecimal
+        """.trimIndent()
+        val fixtureFile = kotlin(name = "$fixtureName.kt", contents = fixtureSource)
+
+        // When
+        val result = compile(
+            arguments = mapOf("fixtures.run" to "true"),
+            sourceFiles = listOf(fixtureFile),
+        )
+        val generatedContent = getGeneratedContent(
+            packageName = packageName,
+            filename = "${fixtureName}Fixture.kt",
+        )
+
+        // Then
+        assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
+        val expected = """
+            package $packageName
+
+            import java.math.BigDecimal
+
+            public fun create$fixtureName(bigDecimalAliasValue: BigDecimal = BigDecimal.ZERO): TestClass =
+                $packageName.$fixtureName(
+            	bigDecimalAliasValue = bigDecimalAliasValue
+            )
+
+        """.trimIndent()
+        assertThat(generatedContent).isEqualTo(expected)
+    }
+
+    @Test
     fun `should not generate a builder function while not running tests`() {
         // Given
         val fixtureFile = kotlin(name = "$fixtureName.kt", contents = fixtureSource)
