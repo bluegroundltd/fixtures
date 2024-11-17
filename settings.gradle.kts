@@ -24,4 +24,5 @@ include(
     ":fixtures-annotations",
     ":fixtures-test-utils",
     ":fixtures-processor-kotlin",
+    ":fixtures-processor-groovy",
 )
