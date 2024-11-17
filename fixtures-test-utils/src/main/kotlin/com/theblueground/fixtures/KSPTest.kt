@@ -47,4 +47,11 @@ abstract class KSPTest(
         sourceFiles: List<SourceFile>,
     ): KotlinCompilation.Result =
         prepareCompilation(arguments = arguments, sourceFiles = sourceFiles).compile()
+
+    // Formatting could be different based on IDE settings.
+    // Removing whitespaces ensures same results when comparing
+    // test outputs
+    fun String.removeWhitespaces(): String {
+        return replace(Regex("\\s"), "")
+    }
 }

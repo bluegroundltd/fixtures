@@ -17,55 +17,55 @@ class FixtureProcessorKotlinTest : KSPTest(
     private val fixtureName = "TestClass"
 
     private val fixtureSource = """
-                    package $packageName
+      package $packageName
 
-                    import com.theblueground.fixtures.Fixture
+      import com.theblueground.fixtures.Fixture
 
-                    import java.math.BigDecimal
-                    import java.math.BigInteger
-                    import java.util.*
+      import java.math.BigDecimal
+      import java.math.BigInteger
+      import java.util.*
 
-                    @Fixture
-                    data class $fixtureName(
-                        val stringValue: String,
-                        val doubleValue: Double,
-                        val floatValue: Float,
-                        val booleanValue: Boolean,
-                        val intValue: Int,
-                        val longValue: Long,
-                        val nestedTestValue: TestSubClass,
-                        val dateValue: Date,
-                        val uuidValue: UUID,
-                        val bigDecimalValue: BigDecimal,
-                        val bigIntegerValue: BigInteger,
-                        val testEnumValue: TestEnum,
-                        val collectionValue: Map<Int, String>,
-                        val testSealedValue: TestSealed
-                    )
+      @Fixture
+      data class $fixtureName(
+        val stringValue: String,
+        val doubleValue: Double,
+        val floatValue: Float,
+        val booleanValue: Boolean,
+        val intValue: Int,
+        val longValue: Long,
+        val nestedTestValue: TestSubClass,
+        val dateValue: Date,
+        val uuidValue: UUID,
+        val bigDecimalValue: BigDecimal,
+        val bigIntegerValue: BigInteger,
+        val testEnumValue: TestEnum,
+        val collectionValue: Map<Int, String>,
+        val testSealedValue: TestSealed
+      )
 
-                    enum class TestEnum {
-                        FIRST_ENUM, SECOND_ENUM
-                    }
+      enum class TestEnum {
+        FIRST_ENUM, SECOND_ENUM
+      }
 
-                    sealed class TestSealed {
+      sealed class TestSealed {
 
-                        object First : TestSealed()
+        object First : TestSealed()
 
-                        object Second : TestSealed()
+        object Second : TestSealed()
 
-                        @Fixture
-                        data class Third(val name: String) : TestSealed()
-                    }
+        @Fixture
+        data class Third(val name: String) : TestSealed()
+      }
 
-                    @Fixture
-                    data class TestSubClass(
-                        val stringValue: String,
-                        val doubleValue: Double,
-                        val floatValue: Float,
-                        val booleanValue: Boolean,
-                        val intValue: Int
-                    )
-    """.trimIndent()
+      @Fixture
+      data class TestSubClass(
+        val stringValue: String,
+        val doubleValue: Double,
+        val floatValue: Float,
+        val booleanValue: Boolean,
+        val intValue: Int
+      )
+    """
 
     @Test
     fun `should generate a builder function with standard data while running fixtures`() {
@@ -149,9 +149,8 @@ class FixtureProcessorKotlinTest : KSPTest(
             	booleanValue = booleanValue,
             	intValue = intValue
             )
-
-        """.trimIndent()
-        assertThat(generatedContent).isEqualTo(expected)
+        """
+        assertThat(generatedContent.removeWhitespaces()).isEqualTo(expected.removeWhitespaces())
     }
 
     @Test
@@ -233,9 +232,8 @@ class FixtureProcessorKotlinTest : KSPTest(
             	booleanValue = booleanValue,
             	intValue = intValue
             )
-
-        """.trimIndent()
-        assertThat(generatedContent).isEqualTo(expected)
+        """
+        assertThat(generatedContent.removeWhitespaces()).isEqualTo(expected.removeWhitespaces())
     }
 
     @Test
@@ -271,26 +269,25 @@ class FixtureProcessorKotlinTest : KSPTest(
         // Then
         assertThat(result1.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
         assertThat(result2.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
-        assertThat(secondTimeGeneratedContent).doesNotMatch(firstTimeGeneratedContent)
+        assertThat(secondTimeGeneratedContent).isNotEqualTo(firstTimeGeneratedContent)
     }
 
     @Test
     fun `should generate a builder function with resolved type for typealias`() {
         // Given
         val fixtureSource = """
-                    package $packageName
+          package $packageName
 
-                    import com.theblueground.fixtures.Fixture
+          import com.theblueground.fixtures.Fixture
+          import java.math.BigDecimal
 
-                    import java.math.BigDecimal
+          @Fixture
+          data class $fixtureName(
+            val bigDecimalAliasValue: BigDecimalAlias,
+          )
 
-                    @Fixture
-                    data class $fixtureName(
-                        val bigDecimalAliasValue: BigDecimalAlias,
-                    )
-
-                    typealias BigDecimalAlias = BigDecimal
-        """.trimIndent()
+          typealias BigDecimalAlias = BigDecimal
+        """
         val fixtureFile = kotlin(name = "$fixtureName.kt", contents = fixtureSource)
 
         // When
@@ -314,9 +311,8 @@ class FixtureProcessorKotlinTest : KSPTest(
                 $packageName.$fixtureName(
             	bigDecimalAliasValue = bigDecimalAliasValue
             )
-
-        """.trimIndent()
-        assertThat(generatedContent).isEqualTo(expected)
+        """
+        assertThat(generatedContent.removeWhitespaces()).isEqualTo(expected.removeWhitespaces())
     }
 
     @Test
@@ -343,17 +339,16 @@ class FixtureProcessorKotlinTest : KSPTest(
     fun `should add import for ZoneId when has ZonedDateTime parameter`() {
         // Given
         val fixtureSource = """
-                    package $packageName
+          package $packageName
 
-                    import com.theblueground.fixtures.Fixture
+          import com.theblueground.fixtures.Fixture
+          import java.time.ZonedDateTime
 
-                    import java.time.ZonedDateTime
-
-                    @Fixture
-                    data class $fixtureName(
-                        val zonedDateTimeValue: ZonedDateTime,
-                    )
-        """.trimIndent()
+          @Fixture
+          data class $fixtureName(
+            val zonedDateTimeValue: ZonedDateTime,
+          )
+        """
 
         val fixtureFile = kotlin(name = "$fixtureName.kt", contents = fixtureSource)
 
@@ -380,64 +375,63 @@ class FixtureProcessorKotlinTest : KSPTest(
             	zonedDateTimeValue = zonedDateTimeValue
             )
 
-        """.trimIndent()
+        """
 
-        assertThat(generatedContent).isEqualTo(expected)
+        assertThat(generatedContent.removeWhitespaces()).isEqualTo(expected.removeWhitespaces())
     }
 
     @Test
     fun `should generate a builder function with standard data and nullable arguments`() {
         // Given
         val fixtureSource = """
-                    package $packageName
+          package $packageName
 
-                    import com.theblueground.fixtures.Fixture
+          import com.theblueground.fixtures.Fixture
+          import java.math.BigDecimal
+          import java.math.BigInteger
+          import java.util.*
 
-                    import java.math.BigDecimal
-                    import java.math.BigInteger
-                    import java.util.*
+          @Fixture
+          data class $fixtureName(
+              val stringValue: String?,
+              val doubleValue: Double?,
+              val floatValue: Float?,
+              val booleanValue: Boolean?,
+              val intValue: Int?,
+              val longValue: Long?,
+              val nestedTestValue: TestSubClass?,
+              val dateValue: Date?,
+              val uuidValue: UUID?,
+              val bigDecimalValue: BigDecimal?,
+              val bigIntegerValue: BigInteger?,
+              val testEnumValue: TestEnum?,
+              val collectionValue: Map<Int, String>?,
+              val testSealedValue: TestSealed?
+          )
 
-                    @Fixture
-                    data class $fixtureName(
-                        val stringValue: String?,
-                        val doubleValue: Double?,
-                        val floatValue: Float?,
-                        val booleanValue: Boolean?,
-                        val intValue: Int?,
-                        val longValue: Long?,
-                        val nestedTestValue: TestSubClass?,
-                        val dateValue: Date?,
-                        val uuidValue: UUID?,
-                        val bigDecimalValue: BigDecimal?,
-                        val bigIntegerValue: BigInteger?,
-                        val testEnumValue: TestEnum?,
-                        val collectionValue: Map<Int, String>?,
-                        val testSealedValue: TestSealed?
-                    )
+          enum class TestEnum {
+              FIRST_ENUM, SECOND_ENUM
+          }
 
-                    enum class TestEnum {
-                        FIRST_ENUM, SECOND_ENUM
-                    }
+          sealed class TestSealed {
 
-                    sealed class TestSealed {
+              object First : TestSealed()
 
-                        object First : TestSealed()
+              object Second : TestSealed()
 
-                        object Second : TestSealed()
+              @Fixture
+              data class Third(val name: String) : TestSealed()
+          }
 
-                        @Fixture
-                        data class Third(val name: String) : TestSealed()
-                    }
-
-                    @Fixture
-                    data class TestSubClass(
-                        val stringValue: String,
-                        val doubleValue: Double,
-                        val floatValue: Float,
-                        val booleanValue: Boolean,
-                        val intValue: Int
-                    )
-        """.trimIndent()
+          @Fixture
+          data class TestSubClass(
+              val stringValue: String,
+              val doubleValue: Double,
+              val floatValue: Float,
+              val booleanValue: Boolean,
+              val intValue: Int
+          )
+        """
         val fixtureFile = kotlin(name = "$fixtureName.kt", contents = fixtureSource)
 
         // When
@@ -514,26 +508,25 @@ class FixtureProcessorKotlinTest : KSPTest(
             	booleanValue = booleanValue,
             	intValue = intValue
             )
-
-        """.trimIndent()
-        assertThat(generatedContent).isEqualTo(expected)
+        """
+        assertThat(generatedContent.removeWhitespaces()).isEqualTo(expected.removeWhitespaces())
     }
 
     @Test
     fun `should generate a builder function with the provided fixture adapter`() {
         // Given
         val fixtureSource = """
-                    package $packageName
+          package $packageName
 
-                    import com.theblueground.fixtures.Fixture
-                    import com.theblueground.fixtures.FixtureAdapter
+          import com.theblueground.fixtures.Fixture
+          import com.theblueground.fixtures.FixtureAdapter
 
-                    @Fixture
-                    data class $fixtureName(val stringValue: String)
+          @Fixture
+          data class $fixtureName(val stringValue: String)
 
-                    @FixtureAdapter
-                    fun stringFixtureProvider(): String = "A string"
-        """.trimIndent()
+          @FixtureAdapter
+          fun stringFixtureProvider(): String = "A string"
+        """
         val fixtureFile = kotlin(name = "$fixtureName.kt", contents = fixtureSource)
 
         // When
@@ -555,31 +548,31 @@ class FixtureProcessorKotlinTest : KSPTest(
             	stringValue = stringValue
             )
 
-        """.trimIndent()
-        assertThat(generatedContent).isEqualTo(expected)
+        """
+        assertThat(generatedContent.removeWhitespaces()).isEqualTo(expected.removeWhitespaces())
     }
 
     @Test
     fun `should generate builder functions for inner classes with the same name`() {
         // Given
         val fixtureSource = """
-                    package $packageName
+          package $packageName
 
-                    import com.theblueground.fixtures.Fixture
-                    import com.theblueground.fixtures.FixtureAdapter
+          import com.theblueground.fixtures.Fixture
+          import com.theblueground.fixtures.FixtureAdapter
 
-                    @Fixture
-                    data class Foo(val baz: Baz) {
-                        @Fixture
-                        data class Baz(val text: String)
-                    }
+          @Fixture
+          data class Foo(val baz: Baz) {
+            @Fixture
+            data class Baz(val text: String)
+          }
 
-                    @Fixture
-                    data class Bar(val baz: Baz) {
-                        @Fixture
-                        data class Baz(val number: Int)
-                    }
-        """.trimIndent()
+          @Fixture
+          data class Bar(val baz: Baz) {
+            @Fixture
+            data class Baz(val number: Int)
+          }
+        """
         val fixtureFile = kotlin(name = "$fixtureName.kt", contents = fixtureSource)
 
         // When
@@ -592,28 +585,27 @@ class FixtureProcessorKotlinTest : KSPTest(
         // Then
         assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
         val expected = """
-                    package somefixture
+          package somefixture
 
-                    import kotlin.Int
-                    import kotlin.String
+          import kotlin.Int
+          import kotlin.String
 
-                    public fun createFoo(baz: Foo.Baz = somefixture.createFooBaz()): Foo = somefixture.Foo(
-                    	baz = baz
-                    )
+          public fun createFoo(baz: Foo.Baz = somefixture.createFooBaz()): Foo = somefixture.Foo(
+            baz = baz
+          )
 
-                    public fun createFooBaz(text: String = "text"): Foo.Baz = somefixture.Foo.Baz(
-                    	text = text
-                    )
+          public fun createFooBaz(text: String = "text"): Foo.Baz = somefixture.Foo.Baz(
+            text = text
+          )
 
-                    public fun createBar(baz: Bar.Baz = somefixture.createBarBaz()): Bar = somefixture.Bar(
-                    	baz = baz
-                    )
+          public fun createBar(baz: Bar.Baz = somefixture.createBarBaz()): Bar = somefixture.Bar(
+            baz = baz
+          )
 
-                    public fun createBarBaz(number: Int = 0): Bar.Baz = somefixture.Bar.Baz(
-                    	number = number
-                    )
-
-        """.trimIndent()
-        assertThat(generatedContent).isEqualTo(expected)
+          public fun createBarBaz(number: Int = 0): Bar.Baz = somefixture.Bar.Baz(
+            number = number
+          )
+        """
+        assertThat(generatedContent.removeWhitespaces()).isEqualTo(expected.removeWhitespaces())
     }
 }

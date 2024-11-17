@@ -17,40 +17,40 @@ class FixtureAdapterKotlinTest : KSPTest(
     private val externalClassName = "ExternalClass"
 
     private val externalClassSource = """
-                    package $externalClassPackageName
+      package $externalClassPackageName
 
-                    class $externalClassName
-    """.trimIndent()
+      class $externalClassName
+    """
 
     private val fixturePackageName = "somefixture"
 
     private val fixtureName = "TestClass"
 
     private val fixtureSource = """
-                    package $fixturePackageName
+      package $fixturePackageName
 
-                    import  $externalClassPackageName.$externalClassName
-                    import com.theblueground.fixtures.Fixture
+      import  $externalClassPackageName.$externalClassName
+      import com.theblueground.fixtures.Fixture
 
-                    @Fixture
-                    data class $fixtureName(
-                        val stringValue: String,
-                        val doubleValue: Double,
-                        val externalClassValue: $externalClassName,
-                    )
-    """.trimIndent()
+      @Fixture
+      data class $fixtureName(
+          val stringValue: String,
+          val doubleValue: Double,
+          val externalClassValue: $externalClassName,
+      )
+    """
 
     private val adapterClassPackageName = "adapter"
 
     private val adapterSource = """
-                    package $adapterClassPackageName
+      package $adapterClassPackageName
 
-                    import  $externalClassPackageName.$externalClassName
-                    import com.theblueground.fixtures.FixtureAdapter
+      import  $externalClassPackageName.$externalClassName
+      import com.theblueground.fixtures.FixtureAdapter
 
-                    @FixtureAdapter
-                    fun fixtureProvider(): $externalClassName = $externalClassName()
-    """.trimIndent()
+      @FixtureAdapter
+      fun fixtureProvider(): $externalClassName = $externalClassName()
+    """
 
     @Test
     fun `should generate a builder function while running fixtures`() {
@@ -96,9 +96,8 @@ class FixtureAdapterKotlinTest : KSPTest(
             	doubleValue = doubleValue,
             	externalClassValue = externalClassValue
             )
-
-        """.trimIndent()
-        assertThat(generatedContent).isEqualTo(expected)
+        """
+        assertThat(generatedContent.removeWhitespaces()).isEqualTo(expected.removeWhitespaces())
     }
 
     @Test
@@ -145,8 +144,8 @@ class FixtureAdapterKotlinTest : KSPTest(
             	externalClassValue = externalClassValue
             )
 
-        """.trimIndent()
-        assertThat(generatedContent).isEqualTo(expected)
+        """
+        assertThat(generatedContent.removeWhitespaces()).isEqualTo(expected.removeWhitespaces())
     }
 
     @Test
