@@ -17,7 +17,7 @@ dependencies {
 }
 
 tasks.dokkaHtml.configure {
-    outputDirectory.set(buildDir.resolve("dokka"))
+    outputDirectory.set(layout.buildDirectory.asFile.get().resolve("dokka"))
 }
 
 plugins.withId("com.vanniktech.maven.publish") {
