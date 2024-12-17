@@ -37,21 +37,29 @@ class FixtureProcessorTest : KSPTest() {
                         val bigIntegerValue: BigInteger,
                         val testEnumValue: TestEnum,
                         val collectionValue: Map<Int, String>,
-                        val testSealedValue: TestSealed
+                        val testSealedObjectValue: TestSealedObject,
+                        val testSealedDataClassValue: TestSealedDataClass,
                     )
 
                     enum class TestEnum {
                         FIRST_ENUM, SECOND_ENUM
                     }
 
-                    sealed class TestSealed {
+                    sealed class TestSealedObject {
 
-                        object First : TestSealed()
+                        data class First(val name: String) : TestSealedObject()
 
-                        object Second : TestSealed()
+                        object Second : TestSealedObject()
+
+                        object Third : TestSealedObject()
+                    }
+
+                    sealed class TestSealedDataClass {
+
+                        data class First(val name: String) : TestSealedDataClass()
 
                         @Fixture
-                        data class Third(val name: String) : TestSealed()
+                        data class Second(val name: String) : TestSealedDataClass()
                     }
 
                     @Fixture
@@ -110,7 +118,8 @@ class FixtureProcessorTest : KSPTest() {
               bigIntegerValue: BigInteger = BigInteger.ZERO,
               testEnumValue: TestEnum = TestEnum.FIRST_ENUM,
               collectionValue: Map<Int, String> = emptyMap(),
-              testSealedValue: TestSealed = TestSealed.First,
+              testSealedObjectValue: TestSealedObject = TestSealedObject.Second,
+              testSealedDataClassValue: TestSealedDataClass = createTestSealedDataClassSecond(),
             ): TestClass = $packageName.$fixtureName(
             	stringValue = stringValue,
             	doubleValue = doubleValue,
@@ -125,11 +134,12 @@ class FixtureProcessorTest : KSPTest() {
             	bigIntegerValue = bigIntegerValue,
             	testEnumValue = testEnumValue,
             	collectionValue = collectionValue,
-            	testSealedValue = testSealedValue
+            	testSealedObjectValue = testSealedObjectValue,
+            	testSealedDataClassValue = testSealedDataClassValue
             )
 
-            public fun createTestSealedThird(name: String = "name"): TestSealed.Third =
-                $packageName.TestSealed.Third(
+            public fun createTestSealedDataClassSecond(name: String = "name"): TestSealedDataClass.Second =
+                $packageName.TestSealedDataClass.Second(
             	name = name
             )
 
@@ -194,7 +204,8 @@ class FixtureProcessorTest : KSPTest() {
               bigIntegerValue: BigInteger = BigInteger.ZERO,
               testEnumValue: TestEnum = TestEnum.FIRST_ENUM,
               collectionValue: Map<Int, String> = emptyMap(),
-              testSealedValue: TestSealed = TestSealed.First,
+              testSealedObjectValue: TestSealedObject = TestSealedObject.Second,
+              testSealedDataClassValue: TestSealedDataClass = createTestSealedDataClassSecond(),
             ): TestClass = $packageName.$fixtureName(
             	stringValue = stringValue,
             	doubleValue = doubleValue,
@@ -209,15 +220,194 @@ class FixtureProcessorTest : KSPTest() {
             	bigIntegerValue = bigIntegerValue,
             	testEnumValue = testEnumValue,
             	collectionValue = collectionValue,
-            	testSealedValue = testSealedValue
+            	testSealedObjectValue = testSealedObjectValue,
+            	testSealedDataClassValue = testSealedDataClassValue
             )
 
-            public fun createTestSealedThird(name: String = "name"): TestSealed.Third =
-                $packageName.TestSealed.Third(
+            public fun createTestSealedDataClassSecond(name: String = "name"): TestSealedDataClass.Second =
+                $packageName.TestSealedDataClass.Second(
             	name = name
             )
 
             public fun createTestSubClass(
+              stringValue: String = "stringValue",
+              doubleValue: Double = 0.0,
+              floatValue: Float = 0f,
+              booleanValue: Boolean = false,
+              intValue: Int = 0,
+            ): TestSubClass = $packageName.TestSubClass(
+            	stringValue = stringValue,
+            	doubleValue = doubleValue,
+            	floatValue = floatValue,
+            	booleanValue = booleanValue,
+            	intValue = intValue
+            )
+
+        """.trimIndent()
+        assertThat(generatedContent).isEqualTo(expected)
+    }
+
+    @Test
+    fun `should generate a builder function with custom prefix when defined`() {
+        // Given
+        val fixtureFile = kotlin(name = "$fixtureName.kt", contents = fixtureSource)
+
+        // When
+        val result = compile(
+            arguments = mapOf("fixtures.prefix" to "new"),
+            sourceFiles = listOf(fixtureFile),
+        )
+        val generatedContent = getGeneratedContent(
+            packageName = packageName,
+            filename = "${fixtureName}Fixture.kt",
+        )
+
+        // Then
+        assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
+        val expected = """
+            package $packageName
+
+            import java.math.BigDecimal
+            import java.math.BigInteger
+            import java.util.Date
+            import java.util.UUID
+            import kotlin.Boolean
+            import kotlin.Double
+            import kotlin.Float
+            import kotlin.Int
+            import kotlin.Long
+            import kotlin.String
+            import kotlin.collections.Map
+
+            public fun new$fixtureName(
+              stringValue: String = "stringValue",
+              doubleValue: Double = 0.0,
+              floatValue: Float = 0f,
+              booleanValue: Boolean = false,
+              intValue: Int = 0,
+              longValue: Long = 0L,
+              nestedTestValue: TestSubClass = $packageName.newTestSubClass(),
+              dateValue: Date = Date(0),
+              uuidValue: UUID = UUID.fromString("00000000-0000-0000-0000-000000000000"),
+              bigDecimalValue: BigDecimal = BigDecimal.ZERO,
+              bigIntegerValue: BigInteger = BigInteger.ZERO,
+              testEnumValue: TestEnum = TestEnum.FIRST_ENUM,
+              collectionValue: Map<Int, String> = emptyMap(),
+              testSealedObjectValue: TestSealedObject = TestSealedObject.Second,
+              testSealedDataClassValue: TestSealedDataClass = newTestSealedDataClassSecond(),
+            ): TestClass = $packageName.$fixtureName(
+            	stringValue = stringValue,
+            	doubleValue = doubleValue,
+            	floatValue = floatValue,
+            	booleanValue = booleanValue,
+            	intValue = intValue,
+            	longValue = longValue,
+            	nestedTestValue = nestedTestValue,
+            	dateValue = dateValue,
+            	uuidValue = uuidValue,
+            	bigDecimalValue = bigDecimalValue,
+            	bigIntegerValue = bigIntegerValue,
+            	testEnumValue = testEnumValue,
+            	collectionValue = collectionValue,
+            	testSealedObjectValue = testSealedObjectValue,
+            	testSealedDataClassValue = testSealedDataClassValue
+            )
+
+            public fun newTestSealedDataClassSecond(name: String = "name"): TestSealedDataClass.Second =
+                $packageName.TestSealedDataClass.Second(
+            	name = name
+            )
+
+            public fun newTestSubClass(
+              stringValue: String = "stringValue",
+              doubleValue: Double = 0.0,
+              floatValue: Float = 0f,
+              booleanValue: Boolean = false,
+              intValue: Int = 0,
+            ): TestSubClass = $packageName.TestSubClass(
+            	stringValue = stringValue,
+            	doubleValue = doubleValue,
+            	floatValue = floatValue,
+            	booleanValue = booleanValue,
+            	intValue = intValue
+            )
+
+        """.trimIndent()
+        assertThat(generatedContent).isEqualTo(expected)
+    }
+
+    @Test
+    fun `should generate a builder function with no prefix when defined`() {
+        // Given
+        val fixtureFile = kotlin(name = "$fixtureName.kt", contents = fixtureSource)
+
+        // When
+        val result = compile(
+            arguments = mapOf("fixtures.prefix" to ""),
+            sourceFiles = listOf(fixtureFile),
+        )
+        val generatedContent = getGeneratedContent(
+            packageName = packageName,
+            filename = "${fixtureName}Fixture.kt",
+        )
+
+        // Then
+        assertThat(result.exitCode).isEqualTo(KotlinCompilation.ExitCode.OK)
+        val expected = """
+            package $packageName
+
+            import java.math.BigDecimal
+            import java.math.BigInteger
+            import java.util.Date
+            import java.util.UUID
+            import kotlin.Boolean
+            import kotlin.Double
+            import kotlin.Float
+            import kotlin.Int
+            import kotlin.Long
+            import kotlin.String
+            import kotlin.collections.Map
+
+            public fun ${fixtureName.replaceFirstChar { it.lowercase() }}(
+              stringValue: String = "stringValue",
+              doubleValue: Double = 0.0,
+              floatValue: Float = 0f,
+              booleanValue: Boolean = false,
+              intValue: Int = 0,
+              longValue: Long = 0L,
+              nestedTestValue: TestSubClass = $packageName.testSubClass(),
+              dateValue: Date = Date(0),
+              uuidValue: UUID = UUID.fromString("00000000-0000-0000-0000-000000000000"),
+              bigDecimalValue: BigDecimal = BigDecimal.ZERO,
+              bigIntegerValue: BigInteger = BigInteger.ZERO,
+              testEnumValue: TestEnum = TestEnum.FIRST_ENUM,
+              collectionValue: Map<Int, String> = emptyMap(),
+              testSealedObjectValue: TestSealedObject = TestSealedObject.Second,
+              testSealedDataClassValue: TestSealedDataClass = testSealedDataClassSecond(),
+            ): TestClass = $packageName.$fixtureName(
+            	stringValue = stringValue,
+            	doubleValue = doubleValue,
+            	floatValue = floatValue,
+            	booleanValue = booleanValue,
+            	intValue = intValue,
+            	longValue = longValue,
+            	nestedTestValue = nestedTestValue,
+            	dateValue = dateValue,
+            	uuidValue = uuidValue,
+            	bigDecimalValue = bigDecimalValue,
+            	bigIntegerValue = bigIntegerValue,
+            	testEnumValue = testEnumValue,
+            	collectionValue = collectionValue,
+            	testSealedObjectValue = testSealedObjectValue,
+            	testSealedDataClassValue = testSealedDataClassValue
+            )
+
+            public fun testSealedDataClassSecond(name: String = "name"): TestSealedDataClass.Second =
+                $packageName.TestSealedDataClass.Second(
+            	name = name
+            )
+
+            public fun testSubClass(
               stringValue: String = "stringValue",
               doubleValue: Double = 0.0,
               floatValue: Float = 0f,

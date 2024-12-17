@@ -39,9 +39,15 @@ fun createFoo(
 ```
 
 The naming convention for the generated function is the class' name with the
-`create` prefix. So, from the `Foo` class, the `createFoo` function will be generated.
+`create` prefix. So, from the `Foo` class, the `createFoo()` function will be generated.
 This function will be placed in a file with the `FooFixture.kt` name, and the file 
 will be placed in the `Foo`'s package under the `build/generated/ksp/kotlin/` path.
+
+You can change the default `create` prefix to some other value, for example to generate `foo()` function instead:
+
+```gradle
+ksp.arg("fixtures.prefix", "")
+```
 
 ## Randomize your data
 The generated functions have default values for their parameters. The values are [standard](#Supported-field-types) 

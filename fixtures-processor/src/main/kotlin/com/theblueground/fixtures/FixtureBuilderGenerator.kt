@@ -28,7 +28,7 @@ internal class FixtureBuilderGenerator(
     private val valueGenerator = ParameterValueGenerator()
 
     fun generate(
-        randomize: Boolean,
+        kspArguments: KspArguments,
         containingFile: KSFile,
         processedFixtures: List<ProcessedFixture>,
         fixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>,
@@ -40,7 +40,7 @@ internal class FixtureBuilderGenerator(
         processedFixtures.forEach {
             fileSpec.addFunction(
                 funSpec = it.toFunSpec(
-                    randomize = randomize,
+                    kspArguments = kspArguments,
                     containingFile = containingFile,
                     fixtureAdapters = fixtureAdapters,
                 ),
@@ -53,11 +53,12 @@ internal class FixtureBuilderGenerator(
     }
 
     private fun ProcessedFixture.toFunSpec(
-        randomize: Boolean,
+        kspArguments: KspArguments,
         containingFile: KSFile,
         fixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>,
     ): FunSpec {
-        val functionName = "create$parentName${simpleName.replaceFirstChar { it.uppercaseChar() }}"
+        val functionName = "${kspArguments.prefix}$parentName${simpleName.replaceFirstChar { it.uppercaseChar() }}"
+            .replaceFirstChar { it.lowercaseChar() }
 
         val funSpec = FunSpec.builder(name = functionName)
             .addOriginatingKSFile(containingFile)
@@ -65,7 +66,7 @@ internal class FixtureBuilderGenerator(
         parameters.forEach {
             funSpec.addParameter(
                 parameterSpec = it.toParameterSpec(
-                    randomize = randomize,
+                    kspArguments = kspArguments,
                     fixtureAdapters = fixtureAdapters,
                 ),
             )
@@ -76,11 +77,11 @@ internal class FixtureBuilderGenerator(
     }
 
     private fun ProcessedFixtureParameter.toParameterSpec(
-        randomize: Boolean,
+        kspArguments: KspArguments,
         fixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>,
     ): ParameterSpec {
         val defaultValue = valueGenerator.generateDefaultValue(
-            randomize = randomize,
+            kspArguments = kspArguments,
             parameter = this,
             fixtureAdapters = fixtureAdapters,
         )

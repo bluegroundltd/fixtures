@@ -48,7 +48,10 @@ internal class FixtureProcessor(
         processedFixtures = processedFixtures,
     )
 
-    private val randomize = options["fixtures.randomize"]?.let { it.equals("true", true) } ?: false
+    private val kspArguments = KspArguments(
+        randomize = options["fixtures.randomize"]?.let { it.equals("true", true) } ?: false,
+        prefix = options["fixtures.prefix"] ?: "create",
+    )
 
     private val runFixtures = options["fixtures.run"]?.let { it.equals("true", true) } ?: true
 
@@ -105,7 +108,7 @@ internal class FixtureProcessor(
 
         processedFixtures.forEach { (containingFile, processedFixtures) ->
             fixtureBuilderGenerator.generate(
-                randomize = randomize,
+                kspArguments = kspArguments,
                 containingFile = containingFile,
                 processedFixtures = processedFixtures,
                 fixtureAdapters = processedFixtureAdapters,

@@ -1,7 +1,6 @@
 package com.theblueground.fixtures
 
 import com.squareup.kotlinpoet.TypeName
-import java.util.*
 import kotlin.random.Random
 
 /**
@@ -20,33 +19,33 @@ internal class ParameterValueGenerator {
     )
 
     fun generateDefaultValue(
-        randomize: Boolean,
+        kspArguments: KspArguments,
         parameter: ProcessedFixtureParameter,
         fixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>,
     ): String = when {
-        parameter.type.isNullable && randomize && Random.nextBoolean() -> "null"
+        parameter.type.isNullable && kspArguments.randomize && Random.nextBoolean() -> "null"
         else -> generateParameterValue(
-            randomize = randomize,
+            kspArguments = kspArguments,
             parameter = parameter,
             fixtureAdapters = fixtureAdapters,
         )
     }
 
     private fun generateParameterValue(
-        randomize: Boolean,
+        kspArguments: KspArguments,
         parameter: ProcessedFixtureParameter,
         fixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>,
     ): String = when (parameter) {
         is ProcessedFixtureParameter.PrimitiveParameter ->
-            generatePrimitiveValue(randomize = randomize, parameter = parameter)
+            generatePrimitiveValue(randomize = kspArguments.randomize, parameter = parameter)
         is ProcessedFixtureParameter.KnownTypeParameter ->
-            generateKnownTypeValue(randomize = randomize, parameter = parameter)
+            generateKnownTypeValue(randomize = kspArguments.randomize, parameter = parameter)
         is ProcessedFixtureParameter.FixtureParameter ->
-            generateFixtureValue(parameter = parameter)
+            generateFixtureValue(prefix = kspArguments.prefix, parameter = parameter)
         is ProcessedFixtureParameter.EnumParameter ->
-            generateEnumValue(randomize = randomize, parameter = parameter)
+            generateEnumValue(randomize = kspArguments.randomize, parameter = parameter)
         is ProcessedFixtureParameter.SealedParameter ->
-            generateSealedValue(randomize = randomize, parameter = parameter)
+            generateSealedValue(kspArguments = kspArguments, parameter = parameter)
         is ProcessedFixtureParameter.CollectionParameter ->
             generateCollectionValue(parameter = parameter)
         is ProcessedFixtureParameter.FixtureAdapter ->
@@ -216,8 +215,12 @@ internal class ParameterValueGenerator {
     }
 
     private fun generateFixtureValue(
+        prefix: String,
         parameter: ProcessedFixtureParameter.FixtureParameter,
-    ): String = "${parameter.packageName}.create${parameter.typeName}()"
+    ): String {
+        val functionName = "$prefix${parameter.typeName}".replaceFirstChar { it.lowercaseChar() }
+        return "${parameter.packageName}.$functionName()"
+    }
 
     private fun generateEnumValue(
         randomize: Boolean,
@@ -233,21 +236,27 @@ internal class ParameterValueGenerator {
     }
 
     private fun generateSealedValue(
-        randomize: Boolean,
+        kspArguments: KspArguments,
         parameter: ProcessedFixtureParameter.SealedParameter,
     ): String {
-        val sealedEntry = if (randomize) {
-            parameter.entries.random()
+        val entries = parameter.entries.filter { it.isObject || it.isFixture }
+        require(entries.isNotEmpty()) {
+            "At least one sealed data class annotated with @Fixture is required in: ${parameter.type.copy(nullable = false)}"
+        }
+        val sealedEntry = if (kspArguments.randomize) {
+            entries.random()
         } else {
-            parameter.entries.first()
+            entries.first()
         }
 
         return when {
             sealedEntry.isObject -> "${parameter.typeName}.${sealedEntry.name}"
-            sealedEntry.isFixture -> "create${parameter.typeName}${sealedEntry.name}()"
-            else -> throw IllegalArgumentException(
-                "Sealed data classes that are fields of a Fixture should be annotated with @Fixture too",
-            )
+            sealedEntry.isFixture -> {
+                val functionName = "${kspArguments.prefix}${parameter.typeName}${sealedEntry.name}".replaceFirstChar { it.lowercaseChar() }
+                "$functionName()"
+            }
+
+            else -> error("${parameter.typeName}.${sealedEntry.name} must be an object or fixture based on filter in preconditions")
         }
     }
 
