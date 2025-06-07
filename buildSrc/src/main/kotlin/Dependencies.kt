@@ -4,14 +4,14 @@ object Dependencies {
 
         const val KOTLIN = "org.jetbrains.kotlin:kotlin-stdlib"
 
-        const val KSP = "com.google.devtools.ksp:symbol-processing-api:1.9.10-1.0.13"
+        const val KSP = "com.google.devtools.ksp:symbol-processing-api:2.1.0-1.0.29"
     }
 
     object Square {
 
         object Poet {
 
-            private const val VERSION = "1.14.2"
+            private const val VERSION = "1.18.1"
 
             const val KOTLIN = "com.squareup:kotlinpoet:$VERSION"
 

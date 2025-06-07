@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm")
+    id("com.google.devtools.ksp")
     id("org.jetbrains.dokka")
     id("com.vanniktech.maven.publish")
 }
@@ -22,8 +23,9 @@ dependencies {
     testImplementation(TestDependencies.JUnit.JUNIT)
     testImplementation(TestDependencies.Google.TRUTH)
     testImplementation(TestDependencies.Misc.KOTLIN_COMPILE_TESTING)
+    testImplementation(TestDependencies.Misc.KOTLIN_COMPILE_TESTING_KSP)
 }
 
 tasks.dokkaHtml.configure {
-    outputDirectory.set(buildDir.resolve("dokka"))
+    outputDirectory.set(layout.buildDirectory.dir("dokka").get().asFile)
 }

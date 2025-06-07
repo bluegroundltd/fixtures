@@ -3,8 +3,10 @@ package com.theblueground.fixtures
 import com.google.common.truth.Truth.assertThat
 import com.tschuchort.compiletesting.KotlinCompilation
 import com.tschuchort.compiletesting.SourceFile
+import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.junit.Test
 
+@OptIn(ExperimentalCompilerApi::class)
 class FixtureAdapterTest : KSPTest() {
 
     private val externalClassPackageName = "external"
