@@ -19,8 +19,7 @@
         "actions/checkout",
         "aws-actions/configure-aws-credentials"
       ],
-      "groupName": null,
-      "pinDigests": true
+      "enabled": false
     },
     {
       "matchManagers": [
