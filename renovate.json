@@ -30,7 +30,6 @@
       "commitMessageTopic": "GitHub Actions",
       "semanticCommits": "enabled",
       "automerge": false,
-      "pinDigests": true
     }
   ],
   "prConcurrentLimit": 5,
