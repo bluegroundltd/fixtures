@@ -15,6 +15,17 @@
       "matchManagers": [
         "github-actions"
       ],
+      "matchPackageNames": [
+        "actions/checkout",
+        "aws-actions/configure-aws-credentials"
+      ],
+      "groupName": null,
+      "pinDigests": true
+    },
+    {
+      "matchManagers": [
+        "github-actions"
+      ],
       "groupName": "GitHub Actions",
       "commitMessagePrefix": "chore:",
       "commitMessageTopic": "GitHub Actions",
