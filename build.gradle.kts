@@ -15,7 +15,7 @@ buildscript {
         classpath(kotlin("gradle-plugin", version = "2.1.0"))
         classpath("com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:2.1.0-1.0.29")
         classpath("org.jetbrains.dokka:dokka-gradle-plugin:1.5.31")
-        classpath("com.vanniktech:gradle-maven-publish-plugin:0.18.0")
+        classpath("com.vanniktech:gradle-maven-publish-plugin:0.30.0")
     }
 }
 
