@@ -12,15 +12,15 @@ buildscript {
     }
 
     dependencies {
-        classpath(kotlin("gradle-plugin", version = "2.1.0"))
-        classpath("com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:2.1.0-1.0.29")
+        classpath(kotlin("gradle-plugin", version = "2.3.0"))
+        classpath("com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:2.3.0")
         classpath("org.jetbrains.dokka:dokka-gradle-plugin:1.9.20")
         classpath("com.vanniktech:gradle-maven-publish-plugin:0.30.0")
     }
 }
 
 plugins {
-    kotlin("jvm") version "2.1.0" apply false
+    kotlin("jvm") version "2.3.0" apply false
     id("com.diffplug.spotless")
 }
 

@@ -5,9 +5,7 @@ import com.google.devtools.ksp.symbol.KSDeclaration
 import com.google.devtools.ksp.symbol.KSType
 import com.google.devtools.ksp.symbol.KSTypeAlias
 import com.google.devtools.ksp.symbol.KSValueParameter
-import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.TypeName
-import com.squareup.kotlinpoet.ksp.toClassName
 import com.squareup.kotlinpoet.ksp.toTypeName
 
 /**
@@ -68,7 +66,7 @@ internal class ProcessedParameterMapper(
                 parameterType = parameterType,
             )
             else -> throw IllegalArgumentException(
-                "${parameterType.toClassName().simpleName} is not a known type and no related @FixtureAdapter was found",
+                "${parameterType.declaration.simpleName.asString()} is not a known type and no related @FixtureAdapter was found",
             )
         }
     }
@@ -139,16 +137,10 @@ internal class ProcessedParameterMapper(
     private fun mapCollectionParameter(
         name: String,
         parameterType: KSType,
-    ): ProcessedFixtureParameter.CollectionParameter {
-        val parameterizedType = parameterType.toClassName().parameterizedBy(
-            typeArguments = parameterType.arguments.map { it.toTypeName() }.toTypedArray(),
-        ).copy(nullable = parameterType.isMarkedNullable)
-
-        return ProcessedFixtureParameter.CollectionParameter(
-            name = name,
-            type = parameterizedType,
-        )
-    }
+    ): ProcessedFixtureParameter.CollectionParameter = ProcessedFixtureParameter.CollectionParameter(
+        name = name,
+        type = parameterType.toTypeName(),
+    )
 
     private fun mapFixtureAdapterParameter(
         name: String,

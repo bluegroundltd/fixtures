@@ -1,7 +1,6 @@
 package com.theblueground.fixtures
 
 import com.google.devtools.ksp.processing.CodeGenerator
-import com.google.devtools.ksp.symbol.KSFile
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.ParameterSpec
@@ -27,19 +26,19 @@ internal class FixtureBuilderGenerator(
 
     fun generate(
         randomize: Boolean,
-        containingFile: KSFile,
+        sourceFileInfo: SourceFileInfo,
         processedFixtures: List<ProcessedFixture>,
         fixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>,
     ) {
-        val fileNameWithoutExtension = File(containingFile.fileName).nameWithoutExtension
+        val fileNameWithoutExtension = File(sourceFileInfo.fileName).nameWithoutExtension
         val filename = fileNameWithoutExtension + OUTPUT_FIXTURE_FILENAME_SUFFIX
-        val fileSpec = FileSpec.builder(packageName = containingFile.packageName.asString(), fileName = filename)
+        val fileSpec = FileSpec.builder(packageName = sourceFileInfo.packageName, fileName = filename)
 
         processedFixtures.forEach {
             fileSpec.addFunction(
                 funSpec = it.toFunSpec(
                     randomize = randomize,
-                    containingFile = containingFile,
+                    sourceFileInfo = sourceFileInfo,
                     fixtureAdapters = fixtureAdapters,
                 ),
             )
@@ -52,13 +51,13 @@ internal class FixtureBuilderGenerator(
 
     private fun ProcessedFixture.toFunSpec(
         randomize: Boolean,
-        containingFile: KSFile,
+        sourceFileInfo: SourceFileInfo,
         fixtureAdapters: Map<TypeName, ProcessedFixtureAdapter>,
     ): FunSpec {
         val functionName = "create$parentName${simpleName.replaceFirstChar { it.uppercaseChar() }}"
 
         val funSpec = FunSpec.builder(name = functionName)
-            .addOriginatingKSFile(containingFile)
+            .addOriginatingKSFile(sourceFileInfo.ksFile)
 
         parameters.forEach {
             funSpec.addParameter(
