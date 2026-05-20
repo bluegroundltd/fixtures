@@ -1,5 +1,6 @@
 import com.diffplug.gradle.spotless.SpotlessExtension
 import com.diffplug.gradle.spotless.SpotlessPlugin
+import org.gradle.plugins.signing.SigningExtension
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -15,7 +16,7 @@ buildscript {
         classpath(kotlin("gradle-plugin", version = "2.3.0"))
         classpath("com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:2.3.0")
         classpath("org.jetbrains.dokka:dokka-gradle-plugin:1.9.20")
-        classpath("com.vanniktech:gradle-maven-publish-plugin:0.30.0")
+        classpath("com.vanniktech:gradle-maven-publish-plugin:0.35.0")
     }
 }
 
