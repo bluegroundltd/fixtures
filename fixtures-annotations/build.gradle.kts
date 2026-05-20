@@ -17,11 +17,5 @@ dependencies {
 }
 
 tasks.dokkaHtml.configure {
-    outputDirectory.set(buildDir.resolve("dokka"))
-}
-
-plugins.withId("com.vanniktech.maven.publish") {
-    mavenPublish {
-        sonatypeHost = com.vanniktech.maven.publish.SonatypeHost.S01
-    }
+    outputDirectory.set(layout.buildDirectory.dir("dokka").get().asFile)
 }

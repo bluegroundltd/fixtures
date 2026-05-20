@@ -10,7 +10,6 @@ import com.google.devtools.ksp.symbol.KSFile
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.validate
 import com.squareup.kotlinpoet.TypeName
-import com.squareup.kotlinpoet.ksp.KotlinPoetKspPreview
 
 /**
  * Responsible for processing all data classes that were annotated with the [Fixture] annotation
@@ -18,7 +17,6 @@ import com.squareup.kotlinpoet.ksp.KotlinPoetKspPreview
  * necessary information from the data class declaration and then will use an [FixtureBuilderGenerator]
  * to generate the functions.
  */
-@KotlinPoetKspPreview
 internal class FixtureProcessor(
     options: Map<String, String>,
     codeGenerator: CodeGenerator,
@@ -52,6 +50,8 @@ internal class FixtureProcessor(
 
     private val runFixtures = options["fixtures.run"]?.let { it.equals("true", true) } ?: true
 
+    private val resolvedFixtures = mutableMapOf<SourceFileInfo, List<ProcessedFixture>>()
+
     override fun process(resolver: Resolver): List<KSAnnotated> {
         if (!runFixtures) {
             return emptyList()
@@ -59,6 +59,19 @@ internal class FixtureProcessor(
 
         visitFixtureAdapters(resolver = resolver)
         visitFixtures(resolver = resolver)
+
+        // Eagerly extract file info from KSFile during process() while PSI is still valid.
+        // In KSP2, KSFile references become invalid after process() returns.
+        processedFixtures.forEach { (ksFile, fixtures) ->
+            val fileInfo = SourceFileInfo(
+                fileName = ksFile.fileName,
+                packageName = ksFile.packageName.asString(),
+                ksFile = ksFile,
+            )
+            resolvedFixtures[fileInfo] = fixtures
+        }
+        processedFixtures.clear()
+
         return emptyList()
     }
 
@@ -103,10 +116,10 @@ internal class FixtureProcessor(
             return
         }
 
-        processedFixtures.forEach { (containingFile, processedFixtures) ->
+        resolvedFixtures.forEach { (fileInfo, processedFixtures) ->
             fixtureBuilderGenerator.generate(
                 randomize = randomize,
-                containingFile = containingFile,
+                sourceFileInfo = fileInfo,
                 processedFixtures = processedFixtures,
                 fixtureAdapters = processedFixtureAdapters,
             )

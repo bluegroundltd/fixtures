@@ -1,16 +1,15 @@
 package com.theblueground.fixtures
 
-import com.squareup.kotlinpoet.ksp.KotlinPoetKspPreview
+import com.tschuchort.compiletesting.JvmCompilationResult
 import com.tschuchort.compiletesting.KotlinCompilation
 import com.tschuchort.compiletesting.SourceFile
-import com.tschuchort.compiletesting.kspArgs
-import com.tschuchort.compiletesting.kspWithCompilation
-import com.tschuchort.compiletesting.symbolProcessorProviders
+import com.tschuchort.compiletesting.configureKsp
+import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import java.io.File
 
-@KotlinPoetKspPreview
+@OptIn(ExperimentalCompilerApi::class)
 abstract class KSPTest {
 
     private val generatedSourcesPathPrefix = "ksp/sources/kotlin/"
@@ -33,18 +32,23 @@ abstract class KSPTest {
         sourceFiles: List<SourceFile>,
     ): KotlinCompilation = KotlinCompilation()
         .apply {
-            kspArgs = arguments.toMutableMap()
+            configureKsp {
+                symbolProcessorProviders += FixtureProcessorProvider()
+                processorOptions.putAll(arguments)
+                withCompilation = true
+            }
+
             workingDir = temporaryFolder.root
             inheritClassPath = true
-            symbolProcessorProviders = listOf(FixtureProcessorProvider())
             sources = sourceFiles
             verbose = false
-            kspWithCompilation = true
         }
 
     internal fun compile(
         arguments: Map<String, String> = emptyMap(),
         sourceFiles: List<SourceFile>,
-    ): KotlinCompilation.Result =
-        prepareCompilation(arguments = arguments, sourceFiles = sourceFiles).compile()
+    ): JvmCompilationResult = prepareCompilation(
+        arguments = arguments,
+        sourceFiles = sourceFiles,
+    ).compile()
 }

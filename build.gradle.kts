@@ -1,6 +1,8 @@
 import com.diffplug.gradle.spotless.SpotlessExtension
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import com.diffplug.gradle.spotless.SpotlessPlugin
+import org.gradle.plugins.signing.SigningExtension
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript {
 
@@ -11,15 +13,15 @@ buildscript {
     }
 
     dependencies {
-        classpath(kotlin("gradle-plugin", version = "1.6.10"))
-        classpath("com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:1.6.10-1.0.4")
-        classpath("org.jetbrains.dokka:dokka-gradle-plugin:1.5.31")
-        classpath("com.vanniktech:gradle-maven-publish-plugin:0.18.0")
+        classpath(kotlin("gradle-plugin", version = "2.3.0"))
+        classpath("com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:2.3.0")
+        classpath("org.jetbrains.dokka:dokka-gradle-plugin:1.9.20")
+        classpath("com.vanniktech:gradle-maven-publish-plugin:0.35.0")
     }
 }
 
 plugins {
-    kotlin("jvm") version "1.6.10" apply false
+    kotlin("jvm") version "2.3.0" apply false
     id("com.diffplug.spotless")
 }
 
@@ -30,7 +32,7 @@ allprojects {
     }
 }
 
-val projectJvmTarget = JavaVersion.VERSION_11.toString()
+val projectJvmTarget = JavaVersion.VERSION_17.toString()
 
 subprojects {
     pluginManager.configureSpotlessIntegration(subProject = project)
@@ -38,8 +40,8 @@ subprojects {
     tasks.withType<KotlinCompile>().configureEach {
         dependsOn("spotlessKotlinApply")
 
-        kotlinOptions {
-            jvmTarget = projectJvmTarget
+        compilerOptions {
+            jvmTarget.set(JvmTarget.fromTarget(projectJvmTarget))
         }
     }
 }
